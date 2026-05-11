@@ -1,43 +1,49 @@
 using UnityEngine;
 
-public class ClearCounter : BaseCounter, IKitchenObjectParent
+public class ClearCounter : BaseCounter
 {
+    [Header("Ayarlar")]
+    [SerializeField] private KitchenObjectSO kitchenObjectSO; // Test için (isteðe baðlý)
+    [SerializeField] private Transform counterTopPoint;    // Eþyanýn duracaðý nokta
 
-    [SerializeField] private KitchenObjectSO kitchenObjectSO;
-    [SerializeField] private Transform counterTopPoint;
-
-    private KitchenObject kitchenObject;
+    // DÝKKAT: 'kitchenObject' deðiþkenini buradan sildik çünkü BaseCounter içinde zaten var.
+    // DÝKKAT: GetKitchenObject, SetKitchenObject gibi fonksiyonlarý sildik çünkü BaseCounter'da varlar.
 
     public override void Interact(Player player)
     {
-        if (kitchenObject == null)
+        if (!HasKitchenObject())
         {
-            // MASA BOÞSA: Eðer Player'ýn elinde bir þey yoksa masada yeni bir tane oluþtur
-            if (!player.HasKitchenObject())
+            // --- DURUM 1: MASANIN ÜSTÜ BOÞ ---
+            if (player.HasKitchenObject())
             {
-                Transform kitchenObjectTransform = Instantiate(kitchenObjectSO.prefab, counterTopPoint);
-                kitchenObjectTransform.GetComponent<KitchenObject>().SetKitchenObjectParent(this);
+                // Oyuncunun elinde bir þey varsa: MASAYA BIRAK
+                player.GetKitchenObject().SetKitchenObjectParent(this);
+            }
+            else
+            {
+                // Oyuncunun eli de boþsa: Þimdilik bir þey yapma
             }
         }
         else
         {
-            // MASA DOLUYSA:
+            // --- DURUM 2: MASANIN ÜSTÜ DOLU ---
             if (player.HasKitchenObject())
             {
-                // Player'ýn eli de doluysa þimdilik bir þey yapma (veya yer deðiþtir)
+                // Hem masa hem el doluysa: Þimdilik bir þey yapma (Ýleride tabak sistemi gelecek)
+                Debug.Log("Hem masa hem el dolu!");
             }
             else
             {
-                // Player'ýn eli boþsa masadakini Player'a ver
-                kitchenObject.SetKitchenObjectParent(player);
+                // Oyuncunun eli boþsa: MASADAKÝNÝ ELÝNE AL
+                GetKitchenObject().SetKitchenObjectParent(player);
             }
         }
     }
 
-    // IKitchenObjectParent Fonksiyonlarý (Burasý ayný kalýyor)
-    public Transform GetKitchenObjectFollowTransform() => counterTopPoint;
-    public void SetKitchenObject(KitchenObject kitchenObject) => this.kitchenObject = kitchenObject;
-    public KitchenObject GetKitchenObject() => kitchenObject;
-    public void ClearKitchenObject() => kitchenObject = null;
-    public bool HasKitchenObject() => kitchenObject != null;
+    // Bu fonksiyon BaseCounter'daki abstract/virtual metodu doldurur.
+    // Eþyanýn tam olarak nerede duracaðýný sisteme söyler.
+    public override Transform GetKitchenObjectFollowTransform()
+    {
+        return counterTopPoint;
+    }
 }

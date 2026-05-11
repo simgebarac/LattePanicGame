@@ -3,36 +3,30 @@ using UnityEngine;
 public class KitchenObject : MonoBehaviour
 {
 
-    [Header("Ayarlar")]
     [SerializeField] private KitchenObjectSO kitchenObjectSO;
-
     private IKitchenObjectParent kitchenObjectParent;
 
-    // Bu nesnenin kimlik bilgilerini (ad, model, ikon) döndürür
     public KitchenObjectSO GetKitchenObjectSO()
     {
         return kitchenObjectSO;
     }
 
-    // Nesnenin sahibini (Masa veya Player) deðiþtiren ana fonksiyon
     public void SetKitchenObjectParent(IKitchenObjectParent kitchenObjectParent)
     {
-        // 1. Eðer zaten bir ebeveyni (sahibi) varsa, eski sahibine "ben gidiyorum" de
+        // Eski ebeveynden kendini temizle
         if (this.kitchenObjectParent != null)
         {
             this.kitchenObjectParent.ClearKitchenObject();
         }
 
-        // 2. Yeni sahibini ata
+        // Yeni ebeveyni ata
         this.kitchenObjectParent = kitchenObjectParent;
 
-        // 3. Yeni sahibine "artýk ben senin üzerindeyim" de
+        // Yeni ebeveyne "senin üzerinde ben varým" de
         kitchenObjectParent.SetKitchenObject(this);
 
-        // 4. Görsel olarak objeyi yeni sahibinin tutma noktasýna (HoldPoint/TopPoint) baðla
+        // Görsel olarak yeni tutma noktasýna git ve sýfýrlan
         transform.parent = kitchenObjectParent.GetKitchenObjectFollowTransform();
-
-        // 5. Yerel pozisyonu sýfýrla ki tam tutma noktasýnýn merkezine otursun
         transform.localPosition = Vector3.zero;
     }
 
