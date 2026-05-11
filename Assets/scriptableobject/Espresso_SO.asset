@@ -12,6 +12,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b59816c8e1f432d49a7dff46189f4230, type: 3}
   m_Name: Espresso_SO
   m_EditorClassIdentifier: Assembly-CSharp::KitchenObjectSO
-  prefab: {fileID: 0}
+  prefab: {fileID: 2864730602719848281, guid: 49b51520ccdc70d42b465077d1ee0761, type: 3}
   sprite: {fileID: 0}
-  objectName: 
+  objectName: Espresso
