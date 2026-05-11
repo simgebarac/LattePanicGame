@@ -9,11 +9,18 @@ public class ContainerCounter : BaseCounter
     {
         if (!player.HasKitchenObject())
         {
-            // Eðer oyuncunun eli boþsa, yeni bir tane oluþtur ve direkt eline ver
-            Transform kitchenObjectTransform = Instantiate(kitchenObjectSO.prefab);
-            kitchenObjectTransform.GetComponent<KitchenObject>().SetKitchenObjectParent(player);
+            // 1. KONTROL: SO kutusu boþ mu?
+            if (kitchenObjectSO == null)
+            {
+                Debug.LogError("DÝKKAT: Counter üzerindeki Kitchen Object SO kutusu boþ!");
+                return;
+            }
 
-            Debug.Log("Masadan bir kahve aldýn!");
+            // 2. OLUÞTURMA: Prefab'ý oluþtur
+            Transform kitchenObjectTransform = Instantiate(kitchenObjectSO.prefab);
+
+            // 3. ATAMA: Oyuncunun eline ver
+            kitchenObjectTransform.GetComponent<KitchenObject>().SetKitchenObjectParent(player);
         }
     }
 }

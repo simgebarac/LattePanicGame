@@ -3,6 +3,8 @@ using System;
 
 public class Player : MonoBehaviour, IKitchenObjectParent
 {
+    // --- SINGLETON YAPISI (Makinenin sana ulaþabilmesi için) ---
+    public static Player Instance { get; private set; }
 
     public event EventHandler<OnSelectedCounterChangedEventArgs> OnSelectedCounterChanged;
     public class OnSelectedCounterChangedEventArgs : EventArgs
@@ -17,15 +19,24 @@ public class Player : MonoBehaviour, IKitchenObjectParent
     [SerializeField] private Transform kitchenObjectHoldPoint;
 
     private CharacterController characterController;
-    private Animator animator; // Animasyon için deðiþken
+    private Animator animator;
     private BaseCounter selectedCounter;
     private KitchenObject kitchenObject;
 
     private void Awake()
     {
+        // Singleton atamasý
+        if (Instance != null) { Debug.LogError("Birden fazla Player var!"); }
+        Instance = this;
+
         characterController = GetComponent<CharacterController>();
-        // Karakterin içindeki Animator bileþenini buluyoruz
         animator = GetComponentInChildren<Animator>();
+    }
+
+    // --- DIÞARIDAN BAKILAN COUNTER'I ALMAK ÝÇÝN FONKSÝYON ---
+    public BaseCounter GetSelectedCounter()
+    {
+        return selectedCounter;
     }
 
     private void Start()
@@ -55,10 +66,8 @@ public class Player : MonoBehaviour, IKitchenObjectParent
         Vector2 inputVector = gameInput.GetMovementVectorNormalized();
         Vector3 moveDir = new Vector3(inputVector.x, 0f, inputVector.y);
 
-        // Hareket ediyor mu kontrolü
         bool isWalking = moveDir != Vector3.zero;
 
-        // Animasyon parametresini güncelliyoruz
         if (animator != null)
         {
             animator.SetBool("run", isWalking);
@@ -104,28 +113,9 @@ public class Player : MonoBehaviour, IKitchenObjectParent
     }
 
     // --- IKitchenObjectParent Fonksiyonlarý ---
-    public Transform GetKitchenObjectFollowTransform()
-    {
-        return kitchenObjectHoldPoint;
-    }
-
-    public void SetKitchenObject(KitchenObject kitchenObject)
-    {
-        this.kitchenObject = kitchenObject;
-    }
-
-    public KitchenObject GetKitchenObject()
-    {
-        return kitchenObject;
-    }
-
-    public void ClearKitchenObject()
-    {
-        kitchenObject = null;
-    }
-
-    public bool HasKitchenObject()
-    {
-        return kitchenObject != null;
-    }
+    public Transform GetKitchenObjectFollowTransform() { return kitchenObjectHoldPoint; }
+    public void SetKitchenObject(KitchenObject kitchenObject) { this.kitchenObject = kitchenObject; }
+    public KitchenObject GetKitchenObject() { return kitchenObject; }
+    public void ClearKitchenObject() { kitchenObject = null; }
+    public bool HasKitchenObject() { return kitchenObject != null; }
 }
