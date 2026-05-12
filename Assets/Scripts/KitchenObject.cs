@@ -34,4 +34,10 @@ public class KitchenObject : MonoBehaviour
     {
         return kitchenObjectParent;
     }
+    // KitchenObject.cs içindeki mevcut kodlarýn altýna ekle:
+    public void DestroySelf()
+    {
+        kitchenObjectParent.ClearKitchenObject();
+        Destroy(gameObject);
+    }
 }

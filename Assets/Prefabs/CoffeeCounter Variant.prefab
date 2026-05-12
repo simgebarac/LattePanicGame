@@ -366,7 +366,8 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
-    m_RemovedComponents: []
+    m_RemovedComponents:
+    - {fileID: -9193871865651865808, guid: 703bc39e1d68e8d43864b7222c981ba5, type: 3}
     m_RemovedGameObjects: []
     m_AddedGameObjects:
     - targetCorrespondingSourceObject: {fileID: 4487112595271660211, guid: 703bc39e1d68e8d43864b7222c981ba5, type: 3}
@@ -436,6 +437,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 088c48a5f9b94c84cbc663aa0586eaf9, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::ContainerCounter
+  kitchenObjectSO: {fileID: 11400000, guid: 03ec1236da2b5064d8b53e23a4a05705, type: 2}
 --- !u!4 &1517008313977571564 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 4487112595271660211, guid: 703bc39e1d68e8d43864b7222c981ba5, type: 3}
