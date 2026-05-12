@@ -12,6 +12,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b59816c8e1f432d49a7dff46189f4230, type: 3}
   m_Name: Americano_SO
   m_EditorClassIdentifier: Assembly-CSharp::KitchenObjectSO
-  prefab: {fileID: 0}
+  prefab: {fileID: 7398433639014117162, guid: 4cbf1cc263476804cb983677814aef67, type: 3}
   sprite: {fileID: 0}
-  objectName: 
+  objectName: Americano
