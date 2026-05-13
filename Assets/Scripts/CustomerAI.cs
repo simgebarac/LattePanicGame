@@ -1,58 +1,78 @@
 using UnityEngine;
 using UnityEngine.AI;
+using TMPro;
 
 public class CustomerAI : MonoBehaviour
 {
     private NavMeshAgent agent;
-    private MasaControl targetTable;
-    private bool hasOrderGiven = false;
+    private KitchenObjectSO myOrder;
+    private MasaControl myTable;
+    private bool hasArrived = false;
 
-    void Awake()
+    [Header("UI Referanslarý")]
+    public GameObject bubbleCanvas;
+    public TextMeshProUGUI bubbleOrderText;
+
+    private void Awake()
     {
         agent = GetComponent<NavMeshAgent>();
+        if (bubbleCanvas != null) bubbleCanvas.SetActive(false);
     }
 
-    void Start()
+    public void SetupCustomer(MasaControl table)
     {
-        FindEmptyTable();
-    }
+        myTable = table;
+        agent = GetComponent<NavMeshAgent>();
 
-    void FindEmptyTable()
-    {
-        MasaControl[] allTables = GameObject.FindObjectsOfType<MasaControl>();
+        // 1. Agent'ý kapatýp karakteri zemine hizalayalým
+        agent.enabled = false;
 
-        foreach (MasaControl table in allTables)
+        // En yakýn NavMesh noktasýný bul ve karakteri oraya ýþýnla
+        if (NavMesh.SamplePosition(transform.position, out NavMeshHit hit, 2.0f, NavMesh.AllAreas))
         {
-            if (!table.isReserved)
-            {
-                table.isReserved = true;
-                targetTable = table;
-                agent.SetDestination(targetTable.waitPoint.position);
-                return;
-            }
+            transform.position = hit.position;
         }
-        Debug.Log("Boþ masa yok, kapýda bekliyorum...");
-    }
 
-    void Update()
-    {
-        if (targetTable != null && !hasOrderGiven)
+        // 2. Agent'ý tekrar aç ve hedefi ver
+        agent.enabled = true;
+        if (myTable != null)
         {
-            // NavMeshAgent'ýn hedefe ulaþýp ulaþmadýðýný kontrol et
-            if (!agent.pathPending && agent.remainingDistance <= agent.stoppingDistance)
-            {
-                hasOrderGiven = true;
-                // Masayý ebeveyn yap (Müþteriyi masanýn çocuðu yapýyoruz ki bulmasý kolay olsun)
-                transform.parent = targetTable.transform;
-                // Masaya haber ver
-                targetTable.CustomerArrived();
-            }
+            agent.SetDestination(myTable.GetWaitPoint().position);
+            Debug.Log("Müþteri zemine oturtuldu ve hedefe yönlendirildi!");
         }
     }
 
-    public void FinishAndLeave()
+    private void Update()
     {
-        if (targetTable != null) targetTable.ResetTable();
-        Destroy(gameObject);
+        if (!hasArrived && agent.hasPath && agent.remainingDistance < 0.5f)
+        {
+            ArrivedAtTable();
+        }
+    }
+
+    private void ArrivedAtTable()
+    {
+        hasArrived = true;
+        Debug.Log("Masaya ulaþýldý.");
+
+        if (DeliveryManager.Instance != null)
+        {
+            myOrder = DeliveryManager.Instance.SpawnNewOrder();
+            if (myOrder != null && bubbleCanvas != null)
+            {
+                bubbleOrderText.text = myOrder.objectName;
+                bubbleCanvas.SetActive(true);
+            }
+            if (myTable != null) myTable.SetOrder(myOrder);
+        }
+    }
+
+    public void ReceiveOrderAndLeave()
+    {
+        if (bubbleCanvas != null) bubbleCanvas.SetActive(false);
+        hasArrived = false;
+        // Çýkýþ noktasý (Burayý sahnendeki bir boþlukla deðiþtir)
+        agent.SetDestination(new Vector3(0, 0, -10f));
+        Destroy(gameObject, 5f);
     }
 }

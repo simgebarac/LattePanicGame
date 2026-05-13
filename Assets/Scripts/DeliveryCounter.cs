@@ -6,28 +6,15 @@ public class DeliveryCounter : BaseCounter
     {
         if (player.HasKitchenObject())
         {
-            KitchenObjectSO deliveredObject = player.GetKitchenObject().GetKitchenObjectSO();
+            // Oyuncunun elindeki objenin ne olduðunu alýyoruz
+            KitchenObjectSO deliveredObjectSO = player.GetKitchenObject().GetKitchenObjectSO();
 
-            if (deliveredObject == DeliveryManager.Instance.GetCurrentOrder())
-            {
-                Debug.Log("Doðru Teslimat!");
-                // Doðru kullaným budur:
-                DeliveryManager.Instance.DeliverCorrectOrder();
+            // Yeni sistemdeki DeliverOrder fonksiyonunu çaðýrýyoruz
+            // Bu fonksiyon listenin içinde bu kahve var mý diye kontrol eder
+            DeliveryManager.Instance.DeliverOrder(deliveredObjectSO);
 
-                player.GetKitchenObject().DestroySelf();
-
-                // Müþteriyi bul ve dükkandan gönder (yok et)
-                // Bu sayede Spawner yeni birini üretebilir
-                GameObject customer = GameObject.FindGameObjectWithTag("Customer");
-                if (customer != null)
-                {
-                    Destroy(customer);
-                }
-            }
-            else
-            {
-                Debug.Log("Yanlýþ Kahve!");
-            }
+            // Kahveyi teslim ettik, elindekini yok et
+            player.GetKitchenObject().DestroySelf();
         }
     }
 }

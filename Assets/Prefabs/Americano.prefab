@@ -123,6 +123,7 @@ GameObject:
   m_Component:
   - component: {fileID: 7398433639014117162}
   - component: {fileID: 649580220973869251}
+  - component: {fileID: 2933675025727036476}
   m_Layer: 0
   m_Name: Americano
   m_TagString: Untagged
@@ -160,6 +161,27 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::KitchenObject
   kitchenObjectSO: {fileID: 11400000, guid: d9258755a4d6192409d38e2618936921, type: 2}
+--- !u!65 &2933675025727036476
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5318304142434475569}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 0
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Size: {x: 0.45, y: 0.4, z: 0.3}
+  m_Center: {x: 0.08, y: 0.2, z: 0}
 --- !u!1 &8524169973849447281
 GameObject:
   m_ObjectHideFlags: 0

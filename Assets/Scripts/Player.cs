@@ -3,7 +3,6 @@ using System;
 
 public class Player : MonoBehaviour, IKitchenObjectParent
 {
-    // --- SINGLETON YAPISI (Makinenin sana ulaþabilmesi için) ---
     public static Player Instance { get; private set; }
 
     public event EventHandler<OnSelectedCounterChangedEventArgs> OnSelectedCounterChanged;
@@ -18,25 +17,22 @@ public class Player : MonoBehaviour, IKitchenObjectParent
     [SerializeField] private LayerMask countersLayerMask;
     [SerializeField] private Transform kitchenObjectHoldPoint;
 
+    [Header("Fizik Ayarlarý")]
+    [SerializeField] private float gravity = -9.81f; // Yerçekimi gücü
+
     private CharacterController characterController;
     private Animator animator;
     private BaseCounter selectedCounter;
     private KitchenObject kitchenObject;
+    private Vector3 velocity; // Karakterin dikey hýzý (düþme hýzý)
 
     private void Awake()
     {
-        // Singleton atamasý
         if (Instance != null) { Debug.LogError("Birden fazla Player var!"); }
         Instance = this;
 
         characterController = GetComponent<CharacterController>();
         animator = GetComponentInChildren<Animator>();
-    }
-
-    // --- DIÞARIDAN BAKILAN COUNTER'I ALMAK ÝÇÝN FONKSÝYON ---
-    public BaseCounter GetSelectedCounter()
-    {
-        return selectedCounter;
     }
 
     private void Start()
@@ -59,6 +55,7 @@ public class Player : MonoBehaviour, IKitchenObjectParent
     {
         HandleMovement();
         HandleInteractions();
+        ApplyGravity(); // Yerçekimini her karede uygula
     }
 
     private void HandleMovement()
@@ -75,15 +72,30 @@ public class Player : MonoBehaviour, IKitchenObjectParent
 
         if (isWalking)
         {
+            // Hareket ederken CharacterController.Move kullanýyoruz
             characterController.Move(moveDir * moveSpeed * Time.deltaTime);
             transform.forward = Vector3.Slerp(transform.forward, moveDir, Time.deltaTime * 10f);
         }
     }
 
+    private void ApplyGravity()
+    {
+        // Karakter yerdeyse hýzý sabitle (Yukarý fýrlamayý engeller)
+        if (characterController.isGrounded && velocity.y < 0)
+        {
+            velocity.y = -2f;
+        }
+
+        // Yerçekimini hesapla ve uygula
+        velocity.y += gravity * Time.deltaTime;
+        characterController.Move(velocity * Time.deltaTime);
+    }
+
     private void HandleInteractions()
     {
+        // Iþýn karakterin biraz önünden ve ayak hizasýnýn üzerinden çýksýn
         Vector3 rayOrigin = transform.position + Vector3.up * 0.5f;
-        if (Physics.Raycast(rayOrigin, transform.forward, out RaycastHit raycastHit, 2f, countersLayerMask))
+        if (Physics.Raycast(rayOrigin, transform.forward, out RaycastHit raycastHit, 1.5f, countersLayerMask))
         {
             if (raycastHit.transform.TryGetComponent(out BaseCounter baseCounter))
             {
@@ -102,7 +114,10 @@ public class Player : MonoBehaviour, IKitchenObjectParent
             SetSelectedCounter(null);
         }
     }
-
+    public BaseCounter GetSelectedCounter()
+    {
+        return selectedCounter;
+    }
     private void SetSelectedCounter(BaseCounter selectedCounter)
     {
         this.selectedCounter = selectedCounter;
