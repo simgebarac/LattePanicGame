@@ -13,6 +13,7 @@ public class Player : MonoBehaviour, IKitchenObjectParent
 
     [Header("Ayarlar")]
     [SerializeField] private float moveSpeed = 7f;
+    [SerializeField] private float interactDistance = 2.5f; // Masalara yetiþebilmek için 1.5f'ten 2.5f'e yükselttik
     [SerializeField] private GameInput gameInput;
     [SerializeField] private LayerMask countersLayerMask;
     [SerializeField] private Transform kitchenObjectHoldPoint;
@@ -55,7 +56,7 @@ public class Player : MonoBehaviour, IKitchenObjectParent
     {
         HandleMovement();
         HandleInteractions();
-        ApplyGravity(); // Yerçekimini her karede uygula
+       
     }
 
     private void HandleMovement()
@@ -66,15 +67,21 @@ public class Player : MonoBehaviour, IKitchenObjectParent
         bool isWalking = moveDir != Vector3.zero;
 
         if (animator != null)
-        {
             animator.SetBool("run", isWalking);
-        }
+
+        // Yerçekimi
+        if (!characterController.isGrounded)
+            moveDir.y -= 9.81f * Time.deltaTime;
 
         if (isWalking)
         {
-            // Hareket ederken CharacterController.Move kullanýyoruz
             characterController.Move(moveDir * moveSpeed * Time.deltaTime);
-            transform.forward = Vector3.Slerp(transform.forward, moveDir, Time.deltaTime * 10f);
+            transform.forward = Vector3.Slerp(transform.forward, new Vector3(moveDir.x, 0, moveDir.z), Time.deltaTime * 10f);
+        }
+        else
+        {
+            // Yerde tutmak için küçük bir aþaðý kuvvet
+            characterController.Move(Vector3.down * 2f * Time.deltaTime);
         }
     }
 
@@ -93,16 +100,30 @@ public class Player : MonoBehaviour, IKitchenObjectParent
 
     private void HandleInteractions()
     {
-        // Iþýn karakterin biraz önünden ve ayak hizasýnýn üzerinden çýksýn
         Vector3 rayOrigin = transform.position + Vector3.up * 0.5f;
-        if (Physics.Raycast(rayOrigin, transform.forward, out RaycastHit raycastHit, 1.5f, countersLayerMask))
+
+        // Scene view'da kýrmýzý çizgi olarak Raycast'i göster
+        Debug.DrawRay(rayOrigin, transform.forward * interactDistance, Color.red);
+
+        if (Physics.Raycast(rayOrigin, transform.forward, out RaycastHit debugHit, interactDistance))
         {
-            if (raycastHit.transform.TryGetComponent(out BaseCounter baseCounter))
+            Debug.Log($"[DEBUG] Çarptý: {debugHit.transform.name} | Layer: {LayerMask.LayerToName(debugHit.transform.gameObject.layer)}");
+        }
+        else
+        {
+            Debug.Log("[DEBUG] Hiçbir þeye çarpmadý!");
+        }
+
+        if (Physics.Raycast(rayOrigin, transform.forward, out RaycastHit raycastHit, interactDistance, countersLayerMask))
+        {
+            BaseCounter baseCounter = raycastHit.transform.GetComponent<BaseCounter>();
+            if (baseCounter == null)
+                baseCounter = raycastHit.transform.GetComponentInParent<BaseCounter>();
+
+            if (baseCounter != null)
             {
                 if (baseCounter != selectedCounter)
-                {
                     SetSelectedCounter(baseCounter);
-                }
             }
             else
             {
@@ -118,6 +139,7 @@ public class Player : MonoBehaviour, IKitchenObjectParent
     {
         return selectedCounter;
     }
+
     private void SetSelectedCounter(BaseCounter selectedCounter)
     {
         this.selectedCounter = selectedCounter;

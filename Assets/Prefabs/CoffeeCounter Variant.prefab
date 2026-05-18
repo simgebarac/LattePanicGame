@@ -12,6 +12,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: Cafe_Coffee_Bag_4 (1)
       objectReference: {fileID: 0}
+    - target: {fileID: 1708100017896734011, guid: 11cdd282de9120e44a9a98788ff681e2, type: 3}
+      propertyPath: m_Layer
+      value: 6
+      objectReference: {fileID: 0}
     - target: {fileID: 2089585865572673409, guid: 11cdd282de9120e44a9a98788ff681e2, type: 3}
       propertyPath: m_LocalPosition.x
       value: -0.4
@@ -73,6 +77,10 @@ PrefabInstance:
     - target: {fileID: 6104819879134182367, guid: 4f28af47bbd470f44a8c8e74c8ba7cff, type: 3}
       propertyPath: m_Name
       value: Cafe_Coffee_Bag_2 (3)
+      objectReference: {fileID: 0}
+    - target: {fileID: 6104819879134182367, guid: 4f28af47bbd470f44a8c8e74c8ba7cff, type: 3}
+      propertyPath: m_Layer
+      value: 6
       objectReference: {fileID: 0}
     - target: {fileID: 6914008362472005989, guid: 4f28af47bbd470f44a8c8e74c8ba7cff, type: 3}
       propertyPath: m_LocalPosition.x
@@ -136,6 +144,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: Cafe_Coffee_Bag_4 (3)
       objectReference: {fileID: 0}
+    - target: {fileID: 1708100017896734011, guid: 11cdd282de9120e44a9a98788ff681e2, type: 3}
+      propertyPath: m_Layer
+      value: 6
+      objectReference: {fileID: 0}
     - target: {fileID: 2089585865572673409, guid: 11cdd282de9120e44a9a98788ff681e2, type: 3}
       propertyPath: m_LocalPosition.x
       value: -0.4
@@ -198,6 +210,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: Cafe_Coffee_Bag_1 (2)
       objectReference: {fileID: 0}
+    - target: {fileID: 6048300827377825811, guid: 2e3fd63abe164324b84b66a85b8cbc4d, type: 3}
+      propertyPath: m_Layer
+      value: 6
+      objectReference: {fileID: 0}
     - target: {fileID: 6387284194627560105, guid: 2e3fd63abe164324b84b66a85b8cbc4d, type: 3}
       propertyPath: m_LocalPosition.x
       value: 0.4
@@ -259,6 +275,10 @@ PrefabInstance:
     - target: {fileID: 6104819879134182367, guid: 4f28af47bbd470f44a8c8e74c8ba7cff, type: 3}
       propertyPath: m_Name
       value: Cafe_Coffee_Bag_2 (4)
+      objectReference: {fileID: 0}
+    - target: {fileID: 6104819879134182367, guid: 4f28af47bbd470f44a8c8e74c8ba7cff, type: 3}
+      propertyPath: m_Layer
+      value: 6
       objectReference: {fileID: 0}
     - target: {fileID: 6914008362472005989, guid: 4f28af47bbd470f44a8c8e74c8ba7cff, type: 3}
       propertyPath: m_LocalPosition.x
@@ -455,6 +475,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: Cafe_Coffee_Bag_4
       objectReference: {fileID: 0}
+    - target: {fileID: 1708100017896734011, guid: 11cdd282de9120e44a9a98788ff681e2, type: 3}
+      propertyPath: m_Layer
+      value: 6
+      objectReference: {fileID: 0}
     - target: {fileID: 2089585865572673409, guid: 11cdd282de9120e44a9a98788ff681e2, type: 3}
       propertyPath: m_LocalPosition.x
       value: -0.4
@@ -516,6 +540,10 @@ PrefabInstance:
     - target: {fileID: 6104819879134182367, guid: 4f28af47bbd470f44a8c8e74c8ba7cff, type: 3}
       propertyPath: m_Name
       value: Cafe_Coffee_Bag_2 (1)
+      objectReference: {fileID: 0}
+    - target: {fileID: 6104819879134182367, guid: 4f28af47bbd470f44a8c8e74c8ba7cff, type: 3}
+      propertyPath: m_Layer
+      value: 6
       objectReference: {fileID: 0}
     - target: {fileID: 6914008362472005989, guid: 4f28af47bbd470f44a8c8e74c8ba7cff, type: 3}
       propertyPath: m_LocalPosition.x
@@ -579,6 +607,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: Cafe_Coffee_Bag_1 (1)
       objectReference: {fileID: 0}
+    - target: {fileID: 6048300827377825811, guid: 2e3fd63abe164324b84b66a85b8cbc4d, type: 3}
+      propertyPath: m_Layer
+      value: 6
+      objectReference: {fileID: 0}
     - target: {fileID: 6387284194627560105, guid: 2e3fd63abe164324b84b66a85b8cbc4d, type: 3}
       propertyPath: m_LocalPosition.x
       value: 0.4
@@ -640,6 +672,10 @@ PrefabInstance:
     - target: {fileID: 1708100017896734011, guid: 11cdd282de9120e44a9a98788ff681e2, type: 3}
       propertyPath: m_Name
       value: Cafe_Coffee_Bag_4 (4)
+      objectReference: {fileID: 0}
+    - target: {fileID: 1708100017896734011, guid: 11cdd282de9120e44a9a98788ff681e2, type: 3}
+      propertyPath: m_Layer
+      value: 6
       objectReference: {fileID: 0}
     - target: {fileID: 2089585865572673409, guid: 11cdd282de9120e44a9a98788ff681e2, type: 3}
       propertyPath: m_LocalPosition.x
@@ -703,6 +739,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: Cafe_Coffee_Bag_1
       objectReference: {fileID: 0}
+    - target: {fileID: 6048300827377825811, guid: 2e3fd63abe164324b84b66a85b8cbc4d, type: 3}
+      propertyPath: m_Layer
+      value: 6
+      objectReference: {fileID: 0}
     - target: {fileID: 6387284194627560105, guid: 2e3fd63abe164324b84b66a85b8cbc4d, type: 3}
       propertyPath: m_LocalPosition.x
       value: 0.4
@@ -764,6 +804,10 @@ PrefabInstance:
     - target: {fileID: 1708100017896734011, guid: 11cdd282de9120e44a9a98788ff681e2, type: 3}
       propertyPath: m_Name
       value: Cafe_Coffee_Bag_4 (2)
+      objectReference: {fileID: 0}
+    - target: {fileID: 1708100017896734011, guid: 11cdd282de9120e44a9a98788ff681e2, type: 3}
+      propertyPath: m_Layer
+      value: 6
       objectReference: {fileID: 0}
     - target: {fileID: 2089585865572673409, guid: 11cdd282de9120e44a9a98788ff681e2, type: 3}
       propertyPath: m_LocalPosition.x
@@ -827,6 +871,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: Cafe_Coffee_Bag_2
       objectReference: {fileID: 0}
+    - target: {fileID: 6104819879134182367, guid: 4f28af47bbd470f44a8c8e74c8ba7cff, type: 3}
+      propertyPath: m_Layer
+      value: 6
+      objectReference: {fileID: 0}
     - target: {fileID: 6914008362472005989, guid: 4f28af47bbd470f44a8c8e74c8ba7cff, type: 3}
       propertyPath: m_LocalPosition.x
       value: 0
@@ -888,6 +936,10 @@ PrefabInstance:
     - target: {fileID: 6048300827377825811, guid: 2e3fd63abe164324b84b66a85b8cbc4d, type: 3}
       propertyPath: m_Name
       value: Cafe_Coffee_Bag_1 (3)
+      objectReference: {fileID: 0}
+    - target: {fileID: 6048300827377825811, guid: 2e3fd63abe164324b84b66a85b8cbc4d, type: 3}
+      propertyPath: m_Layer
+      value: 6
       objectReference: {fileID: 0}
     - target: {fileID: 6387284194627560105, guid: 2e3fd63abe164324b84b66a85b8cbc4d, type: 3}
       propertyPath: m_LocalPosition.x
@@ -951,6 +1003,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: Cafe_Coffee_Bag_1 (4)
       objectReference: {fileID: 0}
+    - target: {fileID: 6048300827377825811, guid: 2e3fd63abe164324b84b66a85b8cbc4d, type: 3}
+      propertyPath: m_Layer
+      value: 6
+      objectReference: {fileID: 0}
     - target: {fileID: 6387284194627560105, guid: 2e3fd63abe164324b84b66a85b8cbc4d, type: 3}
       propertyPath: m_LocalPosition.x
       value: 0.4
@@ -1012,6 +1068,10 @@ PrefabInstance:
     - target: {fileID: 6104819879134182367, guid: 4f28af47bbd470f44a8c8e74c8ba7cff, type: 3}
       propertyPath: m_Name
       value: Cafe_Coffee_Bag_2 (2)
+      objectReference: {fileID: 0}
+    - target: {fileID: 6104819879134182367, guid: 4f28af47bbd470f44a8c8e74c8ba7cff, type: 3}
+      propertyPath: m_Layer
+      value: 6
       objectReference: {fileID: 0}
     - target: {fileID: 6914008362472005989, guid: 4f28af47bbd470f44a8c8e74c8ba7cff, type: 3}
       propertyPath: m_LocalPosition.x

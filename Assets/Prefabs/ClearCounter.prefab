@@ -11,7 +11,7 @@ GameObject:
   - component: {fileID: 4487112595271660211}
   - component: {fileID: 6611338169081392964}
   - component: {fileID: -9193871865651865808}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: ClearCounter
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -79,7 +79,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 1185915493037907855}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: CounterTopPoint
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -109,9 +109,25 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 4487112595271660211}
     m_Modifications:
+    - target: {fileID: 1523595827410036, guid: b8c3087888fc448acb63e643fea215d3, type: 3}
+      propertyPath: m_Layer
+      value: 6
+      objectReference: {fileID: 0}
     - target: {fileID: 1744688946905724, guid: b8c3087888fc448acb63e643fea215d3, type: 3}
       propertyPath: m_Name
       value: PW_cupboard_narrow
+      objectReference: {fileID: 0}
+    - target: {fileID: 1744688946905724, guid: b8c3087888fc448acb63e643fea215d3, type: 3}
+      propertyPath: m_Layer
+      value: 6
+      objectReference: {fileID: 0}
+    - target: {fileID: 1880252106593186, guid: b8c3087888fc448acb63e643fea215d3, type: 3}
+      propertyPath: m_Layer
+      value: 6
+      objectReference: {fileID: 0}
+    - target: {fileID: 1945356850786366, guid: b8c3087888fc448acb63e643fea215d3, type: 3}
+      propertyPath: m_Layer
+      value: 6
       objectReference: {fileID: 0}
     - target: {fileID: 4380875056299614, guid: b8c3087888fc448acb63e643fea215d3, type: 3}
       propertyPath: m_LocalScale.x
