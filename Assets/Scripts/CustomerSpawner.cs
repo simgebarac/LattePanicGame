@@ -6,26 +6,28 @@ public class CustomerSpawner : MonoBehaviour
     [Header("Prefab & Noktalar")]
     [SerializeField] private GameObject customerPrefab;
     [SerializeField] private Transform spawnPoint;
-    [SerializeField] private Transform outsideWaitPoint; // Kapý önü bekleme noktasý
+    [SerializeField] private Transform[] outsideWaitPoints;
 
     [Header("Level Ayarlarý")]
     [SerializeField] private float spawnInterval = 8f;
     [SerializeField] private int maxCustomersForLevel = 10;
 
     private List<MasaControl> allTables = new List<MasaControl>();
-    private Queue<CustomerAI> waitingQueue = new Queue<CustomerAI>(); // Kapýdaki sýra
+    private List<CustomerAI> waitingQueue = new List<CustomerAI>();
     private float timer;
     private int spawnedCount = 0;
+    private float queueCheckCooldown = 0f;
+    private int servedCount = 0;
 
     private void Start()
     {
-        MasaControl[] tables = FindObjectsByType<MasaControl>(FindObjectsSortMode.None);
-        allTables.AddRange(tables);
+        allTables.AddRange(FindObjectsByType<MasaControl>(FindObjectsSortMode.None));
+        timer = spawnInterval;
     }
 
     private void Update()
     {
-        // Yeni müþteri spawn et
+        // Spawn timer
         if (spawnedCount < maxCustomersForLevel)
         {
             timer += Time.deltaTime;
@@ -36,8 +38,24 @@ public class CustomerSpawner : MonoBehaviour
             }
         }
 
-        // Sýradaki müþteriyi boþ masaya gönder
-        ProcessQueue();
+        // Queue kontrolü — Cooldown ile üst üste binmeleri kesin engelleme
+        queueCheckCooldown -= Time.deltaTime;
+        if (queueCheckCooldown <= 0f && waitingQueue.Count > 0)
+        {
+            waitingQueue.RemoveAll(c => c == null);
+            MasaControl freeTable = GetFreeTable();
+            if (freeTable != null)
+            {
+                freeTable.ReserveTable(); // MASAYI ANINDA KÝLÝTLE!
+                queueCheckCooldown = 2.0f; // Güvenlik süresini 2 saniyeye çýkardýk yolda yürüme süresi için
+
+                CustomerAI next = waitingQueue[0];
+                waitingQueue.RemoveAt(0);
+                next.AssignTable(freeTable);
+                next.AllowEntry();
+                UpdateQueuePositions();
+            }
+        }
     }
 
     private void SpawnNewCustomer()
@@ -47,43 +65,81 @@ public class CustomerSpawner : MonoBehaviour
         CustomerAI ai = obj.GetComponent<CustomerAI>();
         if (ai == null) return;
 
-        // Boþ masa var mý?
+        spawnedCount++;
         MasaControl freeTable = GetFreeTable();
-        if (freeTable != null)
+
+        // Eðer boþ masa varsa VE kuyrukta hiç bekleyen yoksa direkt içeri al
+        if (freeTable != null && waitingQueue.Count == 0)
         {
-            freeTable.ReserveTable();
-            ai.SetupCustomer(freeTable, outsideWaitPoint);
-            ai.AllowEntry(); // Direkt içeri gönder
+            freeTable.ReserveTable(); // ANINDA KÝLÝTLE
+            ai.SetupCustomer(freeTable, GetQueuePosition(0));
+            ai.AllowEntry();
         }
         else
         {
-            // Masa yok — kapýda beklet (dummy table, gerçek masa sonra verilecek)
-            ai.SetupCustomer(null, outsideWaitPoint);
-            waitingQueue.Enqueue(ai);
+            // Masa yoksa veya öncelik sýrasý baþkasýndaysa kuyruða ekle
+            waitingQueue.Add(ai);
+            int idx = waitingQueue.Count - 1;
+            ai.SetupCustomer(null, GetQueuePosition(idx));
         }
-
-        spawnedCount++;
     }
 
-    private void ProcessQueue()
+    public void RemoveFromQueue(CustomerAI customer)
     {
-        if (waitingQueue.Count == 0) return;
+        if (waitingQueue.Contains(customer))
+        {
+            waitingQueue.Remove(customer);
+            UpdateQueuePositions();
+        }
+    }
 
-        MasaControl freeTable = GetFreeTable();
-        if (freeTable == null) return;
+    private void UpdateQueuePositions()
+    {
+        for (int i = 0; i < waitingQueue.Count; i++)
+        {
+            if (waitingQueue[i] != null)
+                waitingQueue[i].MoveToQueuePosition(GetQueuePosition(i));
+        }
+    }
 
-        CustomerAI next = waitingQueue.Dequeue();
-        if (next == null) return; // Sabýrsýzlanýp gitti olabilir
-
-        freeTable.ReserveTable();
-        next.AssignTable(freeTable); // Masayý ata
-        next.AllowEntry();           // Ýçeri gönder
+    private Transform GetQueuePosition(int index)
+    {
+        if (outsideWaitPoints == null || outsideWaitPoints.Length == 0)
+            return spawnPoint;
+        return outsideWaitPoints[Mathf.Clamp(index, 0, outsideWaitPoints.Length - 1)];
     }
 
     private MasaControl GetFreeTable()
     {
         foreach (var t in allTables)
+        {
             if (!t.IsTableOccupied()) return t;
+        }
         return null;
+    }
+
+    public void RegisterServed()
+    {
+        servedCount++;
+        Debug.Log($"Müþteri Doyuruldu! Toplam: {servedCount}/{maxCustomersForLevel}");
+        if (servedCount >= maxCustomersForLevel)
+            LevelComplete();
+    }
+
+    private void LevelComplete()
+    {
+        PlayerPrefs.SetInt("FinalScore", ScoreManager.Instance?.GetScore() ?? 0);
+        PlayerPrefs.Save();
+
+        // WalkoutManager'daki paneli tetikle
+        if (WalkoutManager.Instance != null)
+        {
+            WalkoutManager.Instance.ShowLevelComplete();
+        }
+        else
+        {
+            Debug.Log("LEVEL TAMAMLANDI! Puan: " + ScoreManager.Instance?.GetScore());
+            Time.timeScale = 0f;
+        }
     }
 }

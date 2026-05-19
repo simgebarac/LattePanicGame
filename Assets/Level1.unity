@@ -450,7 +450,7 @@ GameObject:
   m_Component:
   - component: {fileID: 219492743}
   m_Layer: 0
-  m_Name: OutsideWaitPoint
+  m_Name: OutsideWait_1
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -1887,6 +1887,37 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &882028109
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 882028110}
+  m_Layer: 0
+  m_Name: OutsideWait_3
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &882028110
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 882028109}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 3, y: 0, z: -7.03}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!4 &888637771 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 5153007203819913092, guid: 0d0fe6387355daa46a128f6abee12f60, type: 3}
@@ -2322,7 +2353,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: 2048, y: -25}
+  m_AnchoredPosition: {x: 100, y: -25}
   m_SizeDelta: {x: 200, y: 50}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!4 &1295932765 stripped
@@ -2530,7 +2561,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::WalkoutManager
   maxWalkouts: 3
   walkoutText: {fileID: 1236156922}
-  gameOverSceneName: ResultsScreen
 --- !u!4 &1324851518
 Transform:
   m_ObjectHideFlags: 0
@@ -2809,8 +2839,11 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::CustomerSpawner
   customerPrefab: {fileID: 8771861919961016668, guid: 46c8f88d66e1f8c45bd87f1161f09fa4, type: 3}
   spawnPoint: {fileID: 1498605210}
-  outsideWaitPoint: {fileID: 219492743}
-  spawnInterval: 5
+  outsideWaitPoints:
+  - {fileID: 219492743}
+  - {fileID: 2034243762}
+  - {fileID: 882028110}
+  spawnInterval: 10
   maxCustomersForLevel: 10
 --- !u!4 &1498605210
 Transform:
@@ -3707,6 +3740,37 @@ Transform:
   m_CorrespondingSourceObject: {fileID: 8862214389128944719, guid: 7687942f44828ae41b9b4ec445cd7187, type: 3}
   m_PrefabInstance: {fileID: 462784838}
   m_PrefabAsset: {fileID: 0}
+--- !u!1 &2034243761
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 2034243762}
+  m_Layer: 0
+  m_Name: OutsideWait_2
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &2034243762
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2034243761}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 1.5, y: 0, z: -7.03}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &2083357687
 GameObject:
   m_ObjectHideFlags: 0
@@ -4004,5 +4068,7 @@ SceneRoots:
   - {fileID: 1787901502}
   - {fileID: 1653405449}
   - {fileID: 219492743}
+  - {fileID: 2034243762}
+  - {fileID: 882028110}
   - {fileID: 557654626}
   - {fileID: 1324851518}

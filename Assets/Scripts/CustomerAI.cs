@@ -4,10 +4,10 @@ using TMPro;
 using System.Collections;
 using UnityEngine.SceneManagement;
 
-
 public class CustomerAI : MonoBehaviour
 {
     public float GetPatienceRatio() => patienceTimer / patienceAtTable;
+
     public void AssignTable(MasaControl table)
     {
         myTable = table;
@@ -30,6 +30,7 @@ public class CustomerAI : MonoBehaviour
     private NavMeshAgent agent;
     private MasaControl myTable;
     private KitchenObjectSO myOrder;
+    private Transform outsideWaitPoint; // Hata veren eksik tanım buraya eklendi
 
     [Header("UI")]
     public GameObject bubbleCanvas;
@@ -56,9 +57,10 @@ public class CustomerAI : MonoBehaviour
     public MasaControl GetAssignedTable() => myTable;
 
     // Spawner tarafından çağrılır
-    public void SetupCustomer(MasaControl table, Transform outsideWaitPoint)
+    public void SetupCustomer(MasaControl table, Transform waitPoint)
     {
         myTable = table;
+        outsideWaitPoint = waitPoint; // Gelen tekil veya dizi elemanını kaydeder
 
         // NavMesh warp
         agent.enabled = false;
@@ -89,6 +91,14 @@ public class CustomerAI : MonoBehaviour
             agent.SetDestination(myTable.GetWaitPoint().position);
             StartCoroutine(ArrivalWatchdog(15f));
         }
+    }
+
+    // YENİ: Spawner kuyruğu güncellediğinde müşteriyi sıradaki yeni boş pozisyona yürütür
+    public void MoveToQueuePosition(Transform target)
+    {
+        outsideWaitPoint = target; // Yeni takip noktasını güncelle
+        if (target != null && agent.enabled)
+            agent.SetDestination(target.position);
     }
 
     // ============ UPDATE ============
@@ -158,7 +168,6 @@ public class CustomerAI : MonoBehaviour
     }
 
     // ============ ORDER ============
-    // Oyuncu masaya (E) bastığında MasaControl bu fonksiyonu çağırır
     public void TakeOrder()
     {
         if (State != CustomerState.WaitingForOrder) return;
@@ -177,21 +186,20 @@ public class CustomerAI : MonoBehaviour
     {
         if (State == CustomerState.Leaving) return;
         SetState(CustomerState.Drinking);
-
         HideBubble();
         if (patienceBarObject != null) patienceBarObject.SetActive(false);
 
-        // Puanı hesapla ve ver
         int score = CalculateScore(patiencePercent);
         ScoreManager.Instance?.AddScore(score);
 
-        // Birkaç saniye içme animasyonu, sonra çık
+        // Spawner'a servis edildi bildir
+        FindFirstObjectByType<CustomerSpawner>()?.RegisterServed();
+
         StartCoroutine(DrinkAndLeave());
     }
 
     private IEnumerator DrinkAndLeave()
     {
-        // İçiyor efekti — balonu kapat, bekle
         yield return new WaitForSeconds(drinkDuration);
         Leave();
     }
@@ -205,19 +213,29 @@ public class CustomerAI : MonoBehaviour
         HideBubble();
         if (patienceBarObject != null) patienceBarObject.SetActive(false);
 
-        ScoreManager.Instance?.AddScore(-5); // Ceza puanı
-        WalkoutManager.Instance?.RegisterWalkout(); // Walkout sayacı
+        ScoreManager.Instance?.AddScore(-5);
+        WalkoutManager.Instance?.RegisterWalkout();
 
+        // Masa BURADA boşaltılır
         myTable?.ResetTable();
-        Leave();
+        FindFirstObjectByType<CustomerSpawner>()?.RemoveFromQueue(this);
+
+        agent.SetDestination(new Vector3(8.8f, 1f, -8.6f));
+        Destroy(gameObject, 5f);
     }
 
+    // GÜNCEL: Dükkandan ayrılırken spawner'a haber verir ve sırayı kaydırır
     private void Leave()
     {
         SetState(CustomerState.Leaving);
+
+        // Masa ANCAK BURADA boşaltılır — müşteri fiziksel giderken
         myTable?.ResetTable();
 
-        // Çıkış noktasına git ve yok ol
+        // Spawner'a servis edildi bildir
+        FindFirstObjectByType<CustomerSpawner>()?.RegisterServed();
+        FindFirstObjectByType<CustomerSpawner>()?.RemoveFromQueue(this);
+
         agent.SetDestination(new Vector3(8.8f, 1f, -8.6f));
         Destroy(gameObject, 5f);
     }
