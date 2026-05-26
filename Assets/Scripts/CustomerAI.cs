@@ -2,7 +2,6 @@
 using UnityEngine.AI;
 using TMPro;
 using System.Collections;
-using UnityEngine.SceneManagement;
 
 public class CustomerAI : MonoBehaviour
 {
@@ -13,15 +12,20 @@ public class CustomerAI : MonoBehaviour
         myTable = table;
     }
 
+    public void UpdateBubble(string text)
+    {
+        ShowBubble(text);
+    }
+
     // ============ STATE ============
     public enum CustomerState
     {
-        WaitingOutside,   // Kapıda bekliyor
-        WalkingToTable,   // Masaya yürüyor
-        WaitingForOrder,  // "Sipariş almayı bekliyorum"
-        OrderTaken,       // Sipariş verildi, kahve bekleniyor
-        Drinking,         // Kahveyi içiyor
-        Leaving           // Çıkıyor
+        WaitingOutside,
+        WalkingToTable,
+        WaitingForOrder,
+        OrderTaken,
+        Drinking,
+        Leaving
     }
 
     public CustomerState State { get; private set; } = CustomerState.WaitingOutside;
@@ -29,19 +33,19 @@ public class CustomerAI : MonoBehaviour
     // ============ REFS ============
     private NavMeshAgent agent;
     private MasaControl myTable;
-    private KitchenObjectSO myOrder;
-    private Transform outsideWaitPoint; // Hata veren eksik tanım buraya eklendi
+    private OrderData myOrder;
+    private Transform outsideWaitPoint;
 
     [Header("UI")]
     public GameObject bubbleCanvas;
     public TextMeshProUGUI bubbleOrderText;
-    public GameObject patienceBarObject;      // Sabır barı root objesi
-    public UnityEngine.UI.Image patienceFill; // Sabır barı doluluk image'ı
+    public GameObject patienceBarObject;
+    public UnityEngine.UI.Image patienceFill;
 
     [Header("Ayarlar")]
-    public float patienceOutside = 30f;  // Kapıda bekleme süresi
-    public float patienceAtTable = 60f;  // Masada bekleme süresi (sipariş sonrası)
-    public float drinkDuration = 3f;     // Kahveyi içme süresi
+    public float patienceOutside = 30f;
+    public float patienceAtTable = 60f;
+    public float drinkDuration = 3f;
 
     private float patienceTimer;
     private bool hasArrived = false;
@@ -56,20 +60,23 @@ public class CustomerAI : MonoBehaviour
 
     public MasaControl GetAssignedTable() => myTable;
 
-    // Spawner tarafından çağrılır
     public void SetupCustomer(MasaControl table, Transform waitPoint)
     {
         myTable = table;
-        outsideWaitPoint = waitPoint; // Gelen tekil veya dizi elemanını kaydeder
+        outsideWaitPoint = waitPoint;
 
-        // NavMesh warp
+        if (LevelSettings.Instance != null)
+        {
+            patienceAtTable = LevelSettings.Instance.patienceAtTable;
+            patienceOutside = LevelSettings.Instance.patienceOutside;
+        }
+
         agent.enabled = false;
         if (NavMesh.SamplePosition(transform.position, out NavMeshHit hit, 3f, NavMesh.AllAreas))
             transform.position = hit.position;
         agent.enabled = true;
         agent.Warp(transform.position);
 
-        // Önce kapıda bekle
         SetState(CustomerState.WaitingOutside);
         patienceTimer = patienceOutside;
 
@@ -79,7 +86,6 @@ public class CustomerAI : MonoBehaviour
         if (patienceBarObject != null) patienceBarObject.SetActive(true);
     }
 
-    // Spawner "gel içeri" dediğinde çağrılır
     public void AllowEntry()
     {
         if (State != CustomerState.WaitingOutside) return;
@@ -93,10 +99,9 @@ public class CustomerAI : MonoBehaviour
         }
     }
 
-    // YENİ: Spawner kuyruğu güncellediğinde müşteriyi sıradaki yeni boş pozisyona yürütür
     public void MoveToQueuePosition(Transform target)
     {
-        outsideWaitPoint = target; // Yeni takip noktasını güncelle
+        outsideWaitPoint = target;
         if (target != null && agent.enabled)
             agent.SetDestination(target.position);
     }
@@ -109,10 +114,8 @@ public class CustomerAI : MonoBehaviour
         switch (State)
         {
             case CustomerState.WaitingOutside:
-                // Sabır azalır — çok beklerse gider
                 patienceTimer -= Time.deltaTime;
-                if (patienceTimer <= 0f)
-                    CustomerWalkout();
+                if (patienceTimer <= 0f) CustomerWalkout();
                 break;
 
             case CustomerState.WalkingToTable:
@@ -120,24 +123,21 @@ public class CustomerAI : MonoBehaviour
                 break;
 
             case CustomerState.WaitingForOrder:
-                // Sipariş alınmayı bekliyor — sabır azalır
                 patienceTimer -= Time.deltaTime;
-                if (patienceTimer <= 0f)
-                    CustomerWalkout();
+                if (patienceTimer <= 0f) CustomerWalkout();
                 break;
 
             case CustomerState.OrderTaken:
-                // Kahve bekleniyor — sabır azalır
                 patienceTimer -= Time.deltaTime;
-                if (patienceTimer <= 0f)
-                    CustomerWalkout();
+                if (patienceTimer <= 0f) CustomerWalkout();
                 break;
         }
     }
 
     private void CheckArrival()
     {
-        if (hasArrived || !agent.enabled || agent.pathPending) return;
+        if (agent == null || !agent.isActiveAndEnabled || !agent.isOnNavMesh) return;
+        if (hasArrived || agent.pathPending) return;
         float dist = Vector3.Distance(transform.position, agent.destination);
         if (agent.remainingDistance <= agent.stoppingDistance + 0.1f || dist < 0.8f)
             ArrivedAtTable();
@@ -149,10 +149,12 @@ public class CustomerAI : MonoBehaviour
         if (hasArrived) return;
         hasArrived = true;
 
-        agent.ResetPath();
-        agent.velocity = Vector3.zero;
+        if (agent.isActiveAndEnabled && agent.isOnNavMesh)
+        {
+            agent.ResetPath();
+            agent.velocity = Vector3.zero;
+        }
 
-        // Masaya dön
         if (myTable != null)
         {
             Vector3 dir = myTable.transform.position - transform.position;
@@ -162,8 +164,6 @@ public class CustomerAI : MonoBehaviour
         }
 
         SetState(CustomerState.WaitingForOrder);
-
-        // "Sipariş bekliyorum" yazısını göster
         ShowBubble("Sipariş\nbekliyorum...");
     }
 
@@ -171,14 +171,14 @@ public class CustomerAI : MonoBehaviour
     public void TakeOrder()
     {
         if (State != CustomerState.WaitingForOrder) return;
-
         if (DeliveryManager.Instance == null) return;
+
         myOrder = DeliveryManager.Instance.SpawnNewOrder();
         if (myOrder == null) return;
 
-        myTable.SetOrder(myOrder);
+        myTable.SetOrderData(myOrder);
         SetState(CustomerState.OrderTaken);
-        ShowBubble(myOrder.objectName); // Sipariş adını göster
+        ShowBubble(myOrder.GetOrderText());
     }
 
     // ============ DELIVERY ============
@@ -190,10 +190,7 @@ public class CustomerAI : MonoBehaviour
         if (patienceBarObject != null) patienceBarObject.SetActive(false);
 
         int score = CalculateScore(patiencePercent);
-        ScoreManager.Instance?.AddScore(score);
-
-        // Spawner'a servis edildi bildir
-        FindFirstObjectByType<CustomerSpawner>()?.RegisterServed();
+        DeliveryManager.Instance?.AddScore(score);
 
         StartCoroutine(DrinkAndLeave());
     }
@@ -201,10 +198,19 @@ public class CustomerAI : MonoBehaviour
     private IEnumerator DrinkAndLeave()
     {
         yield return new WaitForSeconds(drinkDuration);
-        Leave();
+
+        // Masa ANCAK müşteri kalkarken boşalsın
+        myTable?.ResetTable();
+
+        FindFirstObjectByType<CustomerSpawner>()?.RegisterServed();
+        FindFirstObjectByType<CustomerSpawner>()?.RemoveFromQueue(this);
+
+        if (agent.isActiveAndEnabled && agent.isOnNavMesh)
+            agent.SetDestination(new Vector3(8.8f, 1f, -8.6f));
+
+        Destroy(gameObject, 5f);
     }
 
-    // ============ WALKOUT ============
     private void CustomerWalkout()
     {
         if (State == CustomerState.Leaving) return;
@@ -213,38 +219,36 @@ public class CustomerAI : MonoBehaviour
         HideBubble();
         if (patienceBarObject != null) patienceBarObject.SetActive(false);
 
-        ScoreManager.Instance?.AddScore(-5);
+        DeliveryManager.Instance?.AddScore(-5);
         WalkoutManager.Instance?.RegisterWalkout();
 
-        // Masa BURADA boşaltılır
-        myTable?.ResetTable();
         FindFirstObjectByType<CustomerSpawner>()?.RemoveFromQueue(this);
 
-        agent.SetDestination(new Vector3(8.8f, 1f, -8.6f));
+        // Masa BURADA boşalsın — hemen değil
+        myTable?.ResetTable();
+
+        if (agent.isActiveAndEnabled && agent.isOnNavMesh)
+            agent.SetDestination(new Vector3(8.8f, 1f, -8.6f));
+
         Destroy(gameObject, 5f);
     }
 
-    // GÜNCEL: Dükkandan ayrılırken spawner'a haber verir ve sırayı kaydırır
+    // Leave() artık kullanılmıyor — DrinkAndLeave içine taşındı
     private void Leave()
     {
         SetState(CustomerState.Leaving);
-
-        // Masa ANCAK BURADA boşaltılır — müşteri fiziksel giderken
         myTable?.ResetTable();
 
-        // Spawner'a servis edildi bildir
         FindFirstObjectByType<CustomerSpawner>()?.RegisterServed();
         FindFirstObjectByType<CustomerSpawner>()?.RemoveFromQueue(this);
 
-        agent.SetDestination(new Vector3(8.8f, 1f, -8.6f));
+        if (agent.isActiveAndEnabled && agent.isOnNavMesh)
+            agent.SetDestination(new Vector3(8.8f, 1f, -8.6f));
         Destroy(gameObject, 5f);
     }
 
     // ============ HELPERS ============
-    private void SetState(CustomerState newState)
-    {
-        State = newState;
-    }
+    private void SetState(CustomerState newState) => State = newState;
 
     private void ShowBubble(string text)
     {
@@ -263,8 +267,6 @@ public class CustomerAI : MonoBehaviour
         if (patienceFill == null) return;
         float maxPatience = (State == CustomerState.WaitingOutside) ? patienceOutside : patienceAtTable;
         patienceFill.fillAmount = Mathf.Clamp01(patienceTimer / maxPatience);
-
-        // Renk: yeşil → sarı → kırmızı
         patienceFill.color = Color.Lerp(Color.red, Color.green, patienceFill.fillAmount);
     }
 
@@ -298,6 +300,14 @@ public class CustomerAI : MonoBehaviour
         {
             bubbleCanvas.transform.LookAt(
                 bubbleCanvas.transform.position + Camera.main.transform.rotation * Vector3.forward,
+                Camera.main.transform.rotation * Vector3.up
+            );
+        }
+
+        if (patienceBarObject != null && patienceBarObject.activeSelf && Camera.main != null)
+        {
+            patienceBarObject.transform.LookAt(
+                patienceBarObject.transform.position + Camera.main.transform.rotation * Vector3.forward,
                 Camera.main.transform.rotation * Vector3.up
             );
         }

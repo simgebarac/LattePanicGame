@@ -13,7 +13,7 @@ public class MainMenuManager : MonoBehaviour
     // Çýkýþ butonuna baðlanacak fonksiyon
     public void QuitGame()
     {
-        Debug.Log("Oyundan çýkýþ yapýldý!"); // Unity editöründe çalýþtýðýný görmek için
-        Application.Quit(); // Gerçek build alýnca oyunu kapatýr
+        Debug.Log("Oyundan çýkýþ yapýldý! (Bu yazý editörde görünür, Build'de oyun tamamen kapanýr)");
+        Application.Quit(); // Gerçek oyunda masaüstüne döndüren komut
     }
 }

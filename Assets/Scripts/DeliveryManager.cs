@@ -6,32 +6,56 @@ public class DeliveryManager : MonoBehaviour
 {
     public static DeliveryManager Instance { get; private set; }
 
-    [SerializeField] private List<KitchenObjectSO> recipeList;
-    private List<KitchenObjectSO> activeOrders = new List<KitchenObjectSO>();
+    [Header("Sipariþ Listesi")]
+    [SerializeField] private List<KitchenObjectSO> drinkList;
+    [SerializeField] private List<KitchenObjectSO> dessertList;
 
-    public TextMeshProUGUI scoreText;
+    [Header("Tatlý Þansý (0=yok, 1=hep)")]
+    [Range(0f, 1f)]
+    [SerializeField] private float dessertChance = 0f;
+
+    [Header("UI")]
+    [SerializeField] private TextMeshProUGUI scoreText;
+
+    private List<OrderData> activeOrders = new List<OrderData>();
     private int score = 0;
 
-    private void Awake() { Instance = this; }
-
-    public KitchenObjectSO SpawnNewOrder()
+    private void Awake()
     {
-        if (recipeList.Count > 0)
-        {
-            KitchenObjectSO order = recipeList[Random.Range(0, recipeList.Count)];
-            activeOrders.Add(order);
-            return order;
-        }
-        return null;
+        if (Instance != null) { Destroy(gameObject); return; }
+        Instance = this;
+
+        // LevelSettings varsa tatlý þansýný oradan al
+        if (LevelSettings.Instance != null)
+            dessertChance = LevelSettings.Instance.dessertChance;
     }
 
-    public void DeliverOrder(KitchenObjectSO order)
+    public OrderData SpawnNewOrder()
     {
-        if (activeOrders.Contains(order))
-        {
-            activeOrders.Remove(order);
-            score += 100;
-            if (scoreText != null) scoreText.text = "Puan: " + score;
-        }
+        if (drinkList == null || drinkList.Count == 0) return null;
+
+        OrderData order = new OrderData();
+        order.drink = drinkList[Random.Range(0, drinkList.Count)];
+
+        if (dessertList != null && dessertList.Count > 0 && Random.value < dessertChance)
+            order.dessert = dessertList[Random.Range(0, dessertList.Count)];
+
+        activeOrders.Add(order);
+        return order;
+    }
+
+    public void AddScore(int amount)
+    {
+        score += amount;
+        if (score < 0) score = 0;
+        UpdateScoreUI();
+    }
+
+    public int GetScore() => score;
+
+    private void UpdateScoreUI()
+    {
+        if (scoreText != null)
+            scoreText.text = "Puan: " + score;
     }
 }

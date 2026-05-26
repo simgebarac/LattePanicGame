@@ -3,75 +3,102 @@ using UnityEngine;
 public class MasaControl : BaseCounter
 {
     [SerializeField] private Transform waitPoint;
-    private KitchenObjectSO currentOrder;
+    private OrderData currentOrder;
     private bool isOccupied = false;
 
     public Transform GetWaitPoint() => waitPoint;
     public bool IsTableOccupied() => isOccupied;
+    public void ReserveTable() => isOccupied = true;
 
-    // Spawner veya müþteri masayý rezerve ettiðinde kilitlenir
-    public void ReserveTable()
-    {
-        isOccupied = true;
-    }
-
-    public void SetOrder(KitchenObjectSO order)
+    public void SetOrderData(OrderData order)
     {
         currentOrder = order;
-        isOccupied = true; // Sipariþ alýnsa bile masa HÂLÂ DOLUDUR!
+        isOccupied = true;
     }
 
     public override void Interact(Player player)
     {
         if (!isOccupied) return;
+
         CustomerAI customer = GetCustomerAtThisTable();
 
-        // 1. AÞAMA: Sipariþ al
+        // 1. Sipariþ al
         if (customer != null && customer.State == CustomerAI.CustomerState.WaitingForOrder)
         {
             customer.TakeOrder();
             return;
         }
 
-        // 2. AÞAMA: Kahve teslim et
-        if (currentOrder != null && player.HasKitchenObject())
+        if (currentOrder == null || !player.HasKitchenObject()) return;
+
+        KitchenObjectSO playerItem = player.GetKitchenObject().GetKitchenObjectSO();
+
+        // ÝÇECEK TESLÝMÝ
+        if (playerItem == currentOrder.drink && !currentOrder.drinkDelivered)
         {
-            KitchenObjectSO playerItem = player.GetKitchenObject().GetKitchenObjectSO();
-            if (playerItem == currentOrder)
+            currentOrder.drinkDelivered = true;
+            player.GetKitchenObject().DestroySelf();
+
+            if (currentOrder.HasDessert && !currentOrder.dessertDelivered)
             {
-                float patiencePercent = customer != null ? Mathf.Clamp01(customer.GetPatienceRatio()) : 1f;
-
-                if (DeliveryManager.Instance != null)
-                    DeliveryManager.Instance.DeliverOrder(currentOrder);
-
-                player.GetKitchenObject().DestroySelf();
-                currentOrder = null; // Sipariþi temizle ama masayý DOLU tut
-
-                // ResetTable() BURADAN KALDIRILDI
-                // Masa müþteri Leave() çaðýrýnca CustomerAI üzerinden sýfýrlanacak
-                customer?.ReceiveOrderAndLeave(patiencePercent);
+                // Tatlý hala bekleniyor
+                customer?.UpdateBubble("+" + currentOrder.dessert.objectName);
+                Debug.Log("Ýçecek tamam, tatlý bekleniyor.");
             }
             else
             {
-                Debug.LogWarning($"Yanlýþ ürün! Beklenen: {currentOrder.objectName}");
+                // Tatlý yoktu veya zaten verildi — bitir
+                FinishOrder(customer);
             }
+            return;
         }
+
+        // TATLI TESLÝMÝ — sýra zorunluluðu YOK
+        if (currentOrder.HasDessert &&
+            playerItem == currentOrder.dessert &&
+            !currentOrder.dessertDelivered)
+        {
+            currentOrder.dessertDelivered = true;
+            player.GetKitchenObject().DestroySelf();
+
+            if (currentOrder.drink != null && !currentOrder.drinkDelivered)
+            {
+                // Ýçecek hala bekleniyor
+                customer?.UpdateBubble(currentOrder.drink.objectName + "\n(içecek bekleniyor)");
+                Debug.Log("Tatlý tamam, içecek bekleniyor.");
+            }
+            else
+            {
+                // Ýçecek yoktu veya zaten verildi — bitir
+                FinishOrder(customer);
+            }
+            return;
+        }
+
+        Debug.LogWarning($"Yanlýþ ürün! Beklenen: {currentOrder.GetOrderText()}");
+    }
+
+    private void FinishOrder(CustomerAI customer)
+    {
+        float patiencePercent = customer != null ?
+            Mathf.Clamp01(customer.GetPatienceRatio()) : 1f;
+        customer?.ReceiveOrderAndLeave(patiencePercent);
+        ResetTable();
     }
 
     private CustomerAI GetCustomerAtThisTable()
     {
         CustomerAI[] all = FindObjectsByType<CustomerAI>(FindObjectsSortMode.None);
         foreach (var c in all)
-        {
-            if (c.GetAssignedTable() == this && c.State != CustomerAI.CustomerState.Leaving)
+            if (c.GetAssignedTable() == this &&
+                c.State != CustomerAI.CustomerState.Leaving)
                 return c;
-        }
         return null;
     }
 
     public void ResetTable()
     {
         currentOrder = null;
-        isOccupied = false; // Koltuk ancak müþteri kalkýnca boþa düþer
+        isOccupied = false;
     }
 }

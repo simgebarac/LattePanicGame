@@ -1,32 +1,24 @@
 ﻿using UnityEngine;
 using UnityEngine.SceneManagement;
-using TMPro;
 
 public class GameOverManager : MonoBehaviour
 {
-    [SerializeField] private TextMeshProUGUI titleText;
-    [SerializeField] private TextMeshProUGUI scoreText;
-
-    private void Start()
+    // Yeniden Dene butonuna bağlanacak fonksiyon
+    public void YenidenDene()
     {
+        // Zaman ölçeğini sıfırlama ihtimaline karşı 1 yapıyoruz (oyun donuk kalmasın)
         Time.timeScale = 1f;
-        int score = PlayerPrefs.GetInt("FinalScore", 0);
-        bool isWin = PlayerPrefs.GetInt("IsWin", 0) == 1;
 
-        if (titleText != null)
-            titleText.text = isWin ? "☕ Level Tamamlandı!" : "😞 Game Over";
-
-        if (scoreText != null)
-            scoreText.text = "Puan: " + score;
-    }
-
-    public void RestartLevel()
-    {
+        // Oyuncuyu tekrar ilk bölüme gönderir
         SceneManager.LoadScene("Level1");
     }
 
-    public void GoToMainMenu()
+    // Ana Menüye Dön butonuna bağlanacak fonksiyon
+    public void AnaMenuyeDon()
     {
+        Time.timeScale = 1f;
+
+        // Oyuncuyu ana menü sahnesine fırlatır
         SceneManager.LoadScene("MainMenu");
     }
 }

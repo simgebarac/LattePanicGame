@@ -15,6 +15,11 @@ public class WalkoutManager : MonoBehaviour
     {
         if (Instance != null) { Destroy(gameObject); return; }
         Instance = this;
+
+        // LevelSettings varsa oradan al
+        if (LevelSettings.Instance != null)
+            maxWalkouts = LevelSettings.Instance.maxWalkouts;
+
         UpdateUI();
     }
 
@@ -22,6 +27,7 @@ public class WalkoutManager : MonoBehaviour
     {
         walkoutCount++;
         UpdateUI();
+        Debug.Log($"Walkout: {walkoutCount}/{maxWalkouts}");
         if (walkoutCount >= maxWalkouts)
             TriggerResult(isWin: false);
     }
@@ -33,30 +39,23 @@ public class WalkoutManager : MonoBehaviour
 
     private void TriggerResult(bool isWin)
     {
-        PlayerPrefs.SetInt("FinalScore", ScoreManager.Instance?.GetScore() ?? 0);
+        // ScoreManager değil DeliveryManager'dan al
+        int levelScore = DeliveryManager.Instance?.GetScore() ?? 0;
+        int currentLevel = SceneManager.GetActiveScene().buildIndex;
+
+        int totalScore = PlayerPrefs.GetInt("TotalScore", 0);
+        PlayerPrefs.SetInt("TotalScore", totalScore + levelScore);
+        PlayerPrefs.SetInt("LevelScore", levelScore);
+        PlayerPrefs.SetInt("CompletedLevel", currentLevel);
         PlayerPrefs.SetInt("IsWin", isWin ? 1 : 0);
         PlayerPrefs.Save();
+
         Time.timeScale = 1f;
 
-        int currentScene = SceneManager.GetActiveScene().buildIndex;
-
         if (isWin)
-        {
-            int nextScene = currentScene + 1;
-            // GameOver sahnesi index 4 — ondan önce level var mı?
-            if (nextScene <= 3) // Level3 index=3
-            {
-                SceneManager.LoadScene(nextScene); // Sonraki levela geç
-            }
-            else
-            {
-                SceneManager.LoadScene("GameOver"); // Tüm levellar bitti
-            }
-        }
+            SceneManager.LoadScene("WinScreen");
         else
-        {
             SceneManager.LoadScene("GameOver");
-        }
     }
 
     private void UpdateUI()
