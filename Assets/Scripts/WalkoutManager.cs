@@ -39,15 +39,17 @@ public class WalkoutManager : MonoBehaviour
 
     private void TriggerResult(bool isWin)
     {
-        // ScoreManager değil DeliveryManager'dan al
         int levelScore = DeliveryManager.Instance?.GetScore() ?? 0;
-        int currentLevel = SceneManager.GetActiveScene().buildIndex;
+        int currentLevel = UnityEngine.SceneManagement.SceneManager.GetActiveScene().buildIndex;
 
-        int totalScore = PlayerPrefs.GetInt("TotalScore", 0);
-        PlayerPrefs.SetInt("TotalScore", totalScore + levelScore);
+        // Hangi levelde olduğunu kaydet
+        PlayerPrefs.SetInt("CurrentLevel", currentLevel); // YENİ
         PlayerPrefs.SetInt("LevelScore", levelScore);
         PlayerPrefs.SetInt("CompletedLevel", currentLevel);
         PlayerPrefs.SetInt("IsWin", isWin ? 1 : 0);
+
+        int totalScore = PlayerPrefs.GetInt("TotalScore", 0);
+        PlayerPrefs.SetInt("TotalScore", totalScore + levelScore);
         PlayerPrefs.Save();
 
         Time.timeScale = 1f;

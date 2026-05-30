@@ -52,9 +52,8 @@ public class CustomerSpawner : MonoBehaviour
             MasaControl freeTable = GetFreeTable();
             if (freeTable != null)
             {
-                // Masayý HEMEN kilitle, sonra müþteriyi gönder
                 freeTable.ReserveTable();
-                queueCheckCooldown = 3.0f; // Yürüme süresi için 3 sn
+                queueCheckCooldown = 3.0f;
 
                 CustomerAI next = waitingQueue[0];
                 waitingQueue.RemoveAt(0);
@@ -64,7 +63,6 @@ public class CustomerSpawner : MonoBehaviour
             }
             else
             {
-                // Boþ masa yok, 1 sn sonra tekrar kontrol et
                 queueCheckCooldown = 1f;
             }
         }
@@ -79,7 +77,6 @@ public class CustomerSpawner : MonoBehaviour
 
         spawnedCount++;
 
-        // Kuyruk boþsa ve boþ masa varsa direkt içeri
         if (waitingQueue.Count == 0)
         {
             MasaControl freeTable = GetFreeTable();
@@ -92,7 +89,6 @@ public class CustomerSpawner : MonoBehaviour
             }
         }
 
-        // Kuyruða ekle
         int idx = waitingQueue.Count;
         ai.SetupCustomer(null, GetQueuePosition(idx));
         waitingQueue.Add(ai);
@@ -127,7 +123,6 @@ public class CustomerSpawner : MonoBehaviour
         {
             if (!t.IsTableOccupied())
             {
-                // Ekstra kontrol: bu masaya atanmýþ aktif müþteri var mý?
                 CustomerAI[] active = FindObjectsByType<CustomerAI>(FindObjectsSortMode.None);
                 bool hasCustomer = false;
                 foreach (var c in active)
@@ -145,18 +140,31 @@ public class CustomerSpawner : MonoBehaviour
         return null;
     }
 
+    // Servis edilen müþteri
     public void RegisterServed()
     {
         servedCount++;
         Debug.Log($"Servis: {servedCount}/{maxCustomersForLevel}");
+        CheckLevelComplete();
+    }
 
-        if (servedCount >= maxCustomersForLevel)
+    // Kaçan müþteri de sayýlsýn — hepsi bitince level biter
+    public void RegisterCustomerGone()
+    {
+        servedCount++;
+        Debug.Log($"Gitti (walkout): {servedCount}/{maxCustomersForLevel}");
+        CheckLevelComplete();
+    }
+
+    private void CheckLevelComplete()
+    {
+        // Tüm müþteriler ya servis edildi ya kaçtý
+        if (servedCount >= maxCustomersForLevel && spawnedCount >= maxCustomersForLevel)
             LevelComplete();
     }
 
     private void LevelComplete()
     {
-        // ScoreManager deðil DeliveryManager kullan
         int score = DeliveryManager.Instance?.GetScore() ?? 0;
         PlayerPrefs.SetInt("FinalScore", score);
         PlayerPrefs.SetInt("LevelScore", score);

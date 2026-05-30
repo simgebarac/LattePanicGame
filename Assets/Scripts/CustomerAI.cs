@@ -222,14 +222,12 @@ public class CustomerAI : MonoBehaviour
         DeliveryManager.Instance?.AddScore(-5);
         WalkoutManager.Instance?.RegisterWalkout();
 
-        FindFirstObjectByType<CustomerSpawner>()?.RemoveFromQueue(this);
-
-        // Masa BURADA boşalsın — hemen değil
         myTable?.ResetTable();
+        FindFirstObjectByType<CustomerSpawner>()?.RemoveFromQueue(this);
+        FindFirstObjectByType<CustomerSpawner>()?.RegisterCustomerGone(); // YENİ
 
         if (agent.isActiveAndEnabled && agent.isOnNavMesh)
             agent.SetDestination(new Vector3(8.8f, 1f, -8.6f));
-
         Destroy(gameObject, 5f);
     }
 

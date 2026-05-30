@@ -569,7 +569,7 @@ MonoBehaviour:
       m_Calls:
       - m_Target: {fileID: 1454934147}
         m_TargetAssemblyTypeName: GameOverManager, Assembly-CSharp
-        m_MethodName: AnaMenuyeDon
+        m_MethodName: GoToMainMenu
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -646,6 +646,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: dee83989a9740bf4db588cc27f97d232, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::GameOverManager
+  titleText: {fileID: 0}
+  scoreText: {fileID: 0}
 --- !u!4 &1454934148
 Transform:
   m_ObjectHideFlags: 0
@@ -824,7 +826,7 @@ MonoBehaviour:
       m_Calls:
       - m_Target: {fileID: 1454934147}
         m_TargetAssemblyTypeName: GameOverManager, Assembly-CSharp
-        m_MethodName: YenidenDene
+        m_MethodName: RestartLevel
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}

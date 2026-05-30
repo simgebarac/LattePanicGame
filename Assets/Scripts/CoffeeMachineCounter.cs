@@ -76,6 +76,15 @@ public class CoffeeMachineCounter : BaseCounter
     {
         bool isLookingAtMe = Player.Instance != null && Player.Instance.GetSelectedCounter() == this;
 
+        // 🧹 F TUŞU İLE SIFIRLAMA KONTROLÜ
+        // Sadece makineye bakıyorsak, makine boşaltılmamışsa (pişmiş kahve yoksa) ve içinde malzeme varsa çalışır
+        if (isLookingAtMe && !HasKitchenObject() && ingredients.Count > 0 && Input.GetKeyDown(KeyCode.F))
+        {
+            ResetMachine();
+            Debug.Log("Kahve makinesinin içindeki malzemeler F tuşu ile sıfırlandı!");
+            return; // Bu karede pişirme kontrolüne girmemesi için işlemi bitiriyoruz
+        }
+
         // PİŞİRME KONTROLÜ
         if (ingredients.Contains("kahve") && Input.GetKey(KeyCode.E) && !HasKitchenObject() && isLookingAtMe)
         {
@@ -144,6 +153,11 @@ public class CoffeeMachineCounter : BaseCounter
     {
         ingredients.Clear();
         timer = 0;
+        if (progressBar != null)
+        {
+            progressBar.value = 0;
+            progressBar.gameObject.SetActive(false);
+        }
         UpdateIcons();
     }
 

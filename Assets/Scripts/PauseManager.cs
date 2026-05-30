@@ -3,7 +3,10 @@ using UnityEngine.SceneManagement;
 
 public class PauseManager : MonoBehaviour
 {
-    [SerializeField] private GameObject pausePanel; // Unity'den paneli buraya baðlayacaðýz
+    [Header("UI Panelleri")]
+    [SerializeField] private GameObject pausePanel;   // Duraklatma menü paneli
+    [SerializeField] private GameObject settingsPanel; // Bizim o pikselli yeni Ayarlar paneli
+
     private bool isPaused = false;
 
     void Update()
@@ -11,10 +14,18 @@ public class PauseManager : MonoBehaviour
         // ESC tuþuna basýldýðýnda tetiklenir
         if (Input.GetKeyDown(KeyCode.Escape))
         {
-            if (isPaused)
-                ResumeGame();
+            // Eðer o sýrada Ayarlar paneli açýksa, ESC'ye basýnca önce ayarlarý kapatsýn
+            if (settingsPanel != null && settingsPanel.activeSelf)
+            {
+                CloseSettingsInPause();
+            }
             else
-                PauseGame();
+            {
+                if (isPaused)
+                    ResumeGame();
+                else
+                    PauseGame();
+            }
         }
     }
 
@@ -28,9 +39,28 @@ public class PauseManager : MonoBehaviour
     public void ResumeGame()
     {
         pausePanel.SetActive(false); // Menüyü kapatýr
+        if (settingsPanel != null) settingsPanel.SetActive(false); // Açýk kaldýysa ayarlarý da kapatýr
         Time.timeScale = 1f;         // Zamaný normale döndürür, oyun devam eder
         isPaused = false;
     }
+
+    // --- PAUSE EKRANINDA AYARLARI AÇIP KAPATMA FONKSÝYONLARI ---
+    public void OpenSettingsInPause()
+    {
+        if (settingsPanel != null)
+        {
+            settingsPanel.SetActive(true); // Ayarlar panelini açar
+        }
+    }
+
+    public void CloseSettingsInPause()
+    {
+        if (settingsPanel != null)
+        {
+            settingsPanel.SetActive(false); // Ayarlar panelini kapatýr
+        }
+    }
+    // ----------------------------------------------------------
 
     public void RestartLevel()
     {
