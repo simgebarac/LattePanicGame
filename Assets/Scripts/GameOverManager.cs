@@ -14,11 +14,19 @@ public class GameOverManager : MonoBehaviour
 
         if (scoreText != null)
             scoreText.text = "Puan: " + score;
+
+        // 🔊 İŞTE BURADA KANKA: Ekran açıldığı an kaybetme sesini çaldırıyoruz!
+        if (SoundManager.Instance != null)
+        {
+            SoundManager.Instance.PlayGameOverSound();
+
+            // 🚀 VE BU SATIR: Paneldeki tüm butonları anında otomatik bağlar!
+            SoundManager.Instance.YenidenBaglaButonlar();
+        }
     }
 
     public void RestartLevel()
     {
-        // Level1'e değil, kaybedilen levela dön
         int currentLevel = PlayerPrefs.GetInt("CurrentLevel", 1);
         SceneManager.LoadScene(currentLevel);
     }

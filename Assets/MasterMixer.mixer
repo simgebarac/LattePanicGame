@@ -52,6 +52,7 @@ AudioMixerGroupController:
   m_AudioMixer: {fileID: 24100000}
   m_GroupID: f2e816e451c844a44ad806b9790c4f0d
   m_Children:
+  - {fileID: 4912404691952451231}
   - {fileID: 6047296713638955650}
   m_Volume: 9df793078371fe843b65f2e8c6d8296a
   m_Pitch: 2cd7cfa8fd95cd5439db82d7e10b5593
@@ -129,8 +130,7 @@ AudioMixerGroupController:
   m_Name: Muzik
   m_AudioMixer: {fileID: 24100000}
   m_GroupID: 3597d65b66eb729468d424957160dbd9
-  m_Children:
-  - {fileID: 4912404691952451231}
+  m_Children: []
   m_Volume: 823bfe156b38e3742b5143102602f01a
   m_Pitch: 95b7bb6d7cd608c4ca85c63932694ab7
   m_Send: 00000000000000000000000000000000

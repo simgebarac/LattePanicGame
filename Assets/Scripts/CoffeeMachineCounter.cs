@@ -27,6 +27,10 @@ public class CoffeeMachineCounter : BaseCounter
             if (!player.HasKitchenObject())
             {
                 GetKitchenObject().SetKitchenObjectParent(player);
+
+                // 🔊 SOSYAL ETKİLEŞİM: Oyuncu tezgahtan pişen kahveyi eline aldığında pick up sesi çalsın kanka!
+                if (SoundManager.Instance != null) SoundManager.Instance.PlayPickUp();
+
                 ResetMachine();
             }
             return;
@@ -43,7 +47,6 @@ public class CoffeeMachineCounter : BaseCounter
             }
             else if ((itemName == "sut" || itemName == "süt") && !ingredients.Contains("sut"))
             {
-                // Süt ekleyebilmek için içinde su olmamalı (Latte kuralı)
                 if (!ingredients.Contains("su"))
                     AddIngredient("sut", player);
                 else
@@ -51,7 +54,6 @@ public class CoffeeMachineCounter : BaseCounter
             }
             else if (itemName == "su" && !ingredients.Contains("su"))
             {
-                // Su ekleyebilmek için içinde süt olmamalı (Americano kuralı)
                 if (!ingredients.Contains("sut"))
                     AddIngredient("su", player);
                 else
@@ -63,6 +65,9 @@ public class CoffeeMachineCounter : BaseCounter
     private void AddIngredient(string ingredientName, Player player)
     {
         ingredients.Add(ingredientName);
+
+        // 🔊 SOSYAL ETKİLEŞİM: Makinenin içine malzeme atıldığında da alma/bırakma sesi gelsin kanka!
+        if (SoundManager.Instance != null) SoundManager.Instance.PlayPickUp();
 
         // Elindeki nesneyi yok et
         Destroy(player.GetKitchenObject().gameObject);
@@ -77,18 +82,20 @@ public class CoffeeMachineCounter : BaseCounter
         bool isLookingAtMe = Player.Instance != null && Player.Instance.GetSelectedCounter() == this;
 
         // 🧹 F TUŞU İLE SIFIRLAMA KONTROLÜ
-        // Sadece makineye bakıyorsak, makine boşaltılmamışsa (pişmiş kahve yoksa) ve içinde malzeme varsa çalışır
         if (isLookingAtMe && !HasKitchenObject() && ingredients.Count > 0 && Input.GetKeyDown(KeyCode.F))
         {
             ResetMachine();
             Debug.Log("Kahve makinesinin içindeki malzemeler F tuşu ile sıfırlandı!");
-            return; // Bu karede pişirme kontrolüne girmemesi için işlemi bitiriyoruz
+            return;
         }
 
         // PİŞİRME KONTROLÜ
         if (ingredients.Contains("kahve") && Input.GetKey(KeyCode.E) && !HasKitchenObject() && isLookingAtMe)
         {
             SetAllIconsVisible(false); // Pişirirken hepsini gizle
+
+            // 🔊 SOSYAL ETKİLEŞİM: Oyuncu E tuşuna basılı tuttuğu sürece kahve makinesi çalışıp ses çıkaracak kanka!
+            if (SoundManager.Instance != null) SoundManager.Instance.PlayCoffeeMachine();
 
             if (progressBar != null) progressBar.gameObject.SetActive(true);
             timer += Time.deltaTime;
@@ -98,6 +105,9 @@ public class CoffeeMachineCounter : BaseCounter
         }
         else
         {
+            // 🔊 SOSYAL ETKİLEŞİM: Tuşu bıraktığında, başka yere baktığında veya kahve piştiğinde ses anında kesilir kanka!
+            if (SoundManager.Instance != null) SoundManager.Instance.StopCoffeeMachine();
+
             // Tuşu bıraktığında veya başka yere baktığında
             timer = 0;
             if (progressBar != null)
@@ -111,7 +121,6 @@ public class CoffeeMachineCounter : BaseCounter
         }
     }
 
-    // İkonları listenin durumuna göre açıp kapatan fonksiyon
     private void UpdateIcons()
     {
         if (kahveIcon != null) kahveIcon.SetActive(ingredients.Contains("kahve"));
@@ -145,12 +154,18 @@ public class CoffeeMachineCounter : BaseCounter
             coffeeTransform.GetComponent<KitchenObject>().SetKitchenObjectParent(this);
         }
 
+        // 🔊 SOSYAL ETKİLEŞİM: Kahve piştiği an loop sesini kapatıyoruz kanka!
+        if (SoundManager.Instance != null) SoundManager.Instance.StopCoffeeMachine();
+
         ingredients.Clear();
         UpdateIcons();
     }
 
     private void ResetMachine()
     {
+        // 🔊 SOSYAL ETKİLEŞİM: Makine sıfırlandığında da sesin durduğundan emin oluyoruz kanka.
+        if (SoundManager.Instance != null) SoundManager.Instance.StopCoffeeMachine();
+
         ingredients.Clear();
         timer = 0;
         if (progressBar != null)

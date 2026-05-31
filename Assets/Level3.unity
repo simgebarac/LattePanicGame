@@ -1998,7 +1998,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5f20ad4149ca95340b5287980769cb78, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::LevelSettings
-  spawnInterval: 15
+  spawnInterval: 10
   maxCustomers: 20
   patienceAtTable: 60
   patienceOutside: 50
@@ -3448,7 +3448,7 @@ MeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: c74fd1bcdfc3dc548aa878748c2c73e3, type: 2}
+  - {fileID: 2100000, guid: fa4e3fc4bace44f6791a201629cc90d8, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0

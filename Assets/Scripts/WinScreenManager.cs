@@ -14,6 +14,15 @@ public class WinScreenManager : MonoBehaviour
 
         if (scoreText != null)
             scoreText.text = score.ToString();
+
+        // 🔊 ZAFER ANI: Ekran açıldığı an zafer sesini çaldırıyoruz!
+        if (SoundManager.Instance != null)
+        {
+            SoundManager.Instance.PlayWinSound();
+
+            // 🚀 OTOMATİK BAĞLANTI: Paneldeki butonları hemen hafızaya alıyoruz kanka!
+            SoundManager.Instance.YenidenBaglaButonlar();
+        }
     }
 
     public void ContinueToNext()
