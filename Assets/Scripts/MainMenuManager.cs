@@ -3,38 +3,31 @@ using UnityEngine.SceneManagement;
 
 public class MainMenuManager : MonoBehaviour
 {
-    [Header("Ayarlar UI Paneli")]
-    [SerializeField] private GameObject settingsPanel; // Unity'den ayarlar panelini buraya sürükleyeceðiz
+    [SerializeField] private GameObject settingsPanel; // Ayarlar_Panel'ini buraya baðlayacaðýz
 
-    // Baþla butonuna baðlanacak fonksiyon
     public void StartGame()
     {
-        Time.timeScale = 1f; // Zamaný sýfýrla (her ihtimale karþý)
-        SceneManager.LoadScene("Level1"); // Seni direkt 1. bölüme fýrlatýr
+        Time.timeScale = 1f;
+        SceneManager.LoadScene("Level1");
     }
 
-    // Ayarlar Panelini Açma Fonksiyonu (Ayarlar Butonuna baðlanacak)
     public void OpenSettings()
     {
         if (settingsPanel != null)
         {
-            settingsPanel.SetActive(true); // Paneli görünür yapar
+            settingsPanel.SetActive(true);
+            // Sahnede SoundManager'ý bulup slider'larý hafýzadaki yerlerine göre kilitler:
+            FindObjectOfType<SoundManager>()?.BaglaSliderlar();
         }
     }
 
-    // Ayarlar Panelini Kapatma Fonksiyonu (Panelin içindeki X butonuna baðlanacak)
     public void CloseSettings()
     {
-        if (settingsPanel != null)
-        {
-            settingsPanel.SetActive(false); // Paneli gizler
-        }
+        if (settingsPanel != null) settingsPanel.SetActive(false);
     }
 
-    // Çýkýþ butonuna baðlanacak fonksiyon
     public void QuitGame()
     {
-        Debug.Log("Oyundan çýkýþ yapýldý! (Bu yazý editörde görünür, Build'de oyun tamamen kapanýr)");
-        Application.Quit(); // Gerçek oyunda masaüstüne döndüren komut
+        Application.Quit();
     }
 }

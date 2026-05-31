@@ -454,6 +454,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PauseManager
   pausePanel: {fileID: 190509620}
+  settingsPanel: {fileID: 306204802}
 --- !u!4 &224435839
 Transform:
   m_ObjectHideFlags: 0
@@ -539,6 +540,22 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 696230898711582390, guid: efff9f771b807c24ba6b7ce7870bc59b, type: 3}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_Target
+      value: 
+      objectReference: {fileID: 224435838}
+    - target: {fileID: 696230898711582390, guid: efff9f771b807c24ba6b7ce7870bc59b, type: 3}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_MethodName
+      value: CloseSettingsInPause
+      objectReference: {fileID: 0}
+    - target: {fileID: 696230898711582390, guid: efff9f771b807c24ba6b7ce7870bc59b, type: 3}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_TargetAssemblyTypeName
+      value: PauseManager, Assembly-CSharp
+      objectReference: {fileID: 0}
+    - target: {fileID: 696230898711582390, guid: efff9f771b807c24ba6b7ce7870bc59b, type: 3}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_Arguments.m_ObjectArgumentAssemblyTypeName
+      value: UnityEngine.Object, UnityEngine
+      objectReference: {fileID: 0}
     - target: {fileID: 1675757665022508323, guid: efff9f771b807c24ba6b7ce7870bc59b, type: 3}
       propertyPath: m_Pivot.x
       value: 0
@@ -669,7 +686,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 6766498527968230174, guid: efff9f771b807c24ba6b7ce7870bc59b, type: 3}
       propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.size
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 6766498527968230174, guid: efff9f771b807c24ba6b7ce7870bc59b, type: 3}
       propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_Mode
@@ -678,10 +695,22 @@ PrefabInstance:
     - target: {fileID: 6766498527968230174, guid: efff9f771b807c24ba6b7ce7870bc59b, type: 3}
       propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_Target
       value: 
-      objectReference: {fileID: 224435837}
+      objectReference: {fileID: 224435838}
     - target: {fileID: 6766498527968230174, guid: efff9f771b807c24ba6b7ce7870bc59b, type: 3}
       propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_CallState
       value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 6766498527968230174, guid: efff9f771b807c24ba6b7ce7870bc59b, type: 3}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_MethodName
+      value: OpenSettingsInPause
+      objectReference: {fileID: 0}
+    - target: {fileID: 6766498527968230174, guid: efff9f771b807c24ba6b7ce7870bc59b, type: 3}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_TargetAssemblyTypeName
+      value: PauseManager, Assembly-CSharp
+      objectReference: {fileID: 0}
+    - target: {fileID: 6766498527968230174, guid: efff9f771b807c24ba6b7ce7870bc59b, type: 3}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_Arguments.m_ObjectArgumentAssemblyTypeName
+      value: UnityEngine.Object, UnityEngine
       objectReference: {fileID: 0}
     - target: {fileID: 6938498586922508262, guid: efff9f771b807c24ba6b7ce7870bc59b, type: 3}
       propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_Target
@@ -704,6 +733,11 @@ PrefabInstance:
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: efff9f771b807c24ba6b7ce7870bc59b, type: 3}
+--- !u!1 &306204802 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 3131741928368655294, guid: efff9f771b807c24ba6b7ce7870bc59b, type: 3}
+  m_PrefabInstance: {fileID: 306204801}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1001 &328281505
 PrefabInstance:
   m_ObjectHideFlags: 0

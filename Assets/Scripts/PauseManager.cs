@@ -49,7 +49,9 @@ public class PauseManager : MonoBehaviour
     {
         if (settingsPanel != null)
         {
-            settingsPanel.SetActive(true); // Ayarlar panelini açar
+            settingsPanel.SetActive(true);
+            // Açýldýðý an slider'larý baðla kanka
+            FindObjectOfType<SoundManager>()?.BaglaSliderlar();
         }
     }
 
