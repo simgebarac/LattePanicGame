@@ -16,7 +16,6 @@ public class WalkoutManager : MonoBehaviour
         if (Instance != null) { Destroy(gameObject); return; }
         Instance = this;
 
-        // LevelSettings varsa oradan al
         if (LevelSettings.Instance != null)
             maxWalkouts = LevelSettings.Instance.maxWalkouts;
 
@@ -40,12 +39,17 @@ public class WalkoutManager : MonoBehaviour
     private void TriggerResult(bool isWin)
     {
         int levelScore = DeliveryManager.Instance?.GetScore() ?? 0;
-        int currentLevel = UnityEngine.SceneManagement.SceneManager.GetActiveScene().buildIndex;
 
-        // Hangi levelde olduğunu kaydet
-        PlayerPrefs.SetInt("CurrentLevel", currentLevel); // YENİ
+        // Sahne ADINDAN level numarasını güvenli şekilde al
+        string sceneName = SceneManager.GetActiveScene().name;
+        int levelNum = 1;
+        if (sceneName == "Level1") levelNum = 1;
+        else if (sceneName == "Level2") levelNum = 2;
+        else if (sceneName == "Level3") levelNum = 3;
+
+        // WinScreenManager bu değeri okuyacak
+        PlayerPrefs.SetInt("CurrentLevel", levelNum);
         PlayerPrefs.SetInt("LevelScore", levelScore);
-        PlayerPrefs.SetInt("CompletedLevel", currentLevel);
         PlayerPrefs.SetInt("IsWin", isWin ? 1 : 0);
 
         int totalScore = PlayerPrefs.GetInt("TotalScore", 0);

@@ -62,6 +62,8 @@ public class Player : MonoBehaviour, IKitchenObjectParent
     private void HandleMovement()
     {
         Vector2 inputVector = gameInput.GetMovementVectorNormalized();
+
+        // Dünya eksenine göre hareket — kameradan baðýmsýz
         Vector3 moveDir = new Vector3(inputVector.x, 0f, inputVector.y);
 
         bool isWalking = moveDir != Vector3.zero;
@@ -69,18 +71,19 @@ public class Player : MonoBehaviour, IKitchenObjectParent
         if (animator != null)
             animator.SetBool("run", isWalking);
 
-        // Yerçekimi
-        if (!characterController.isGrounded)
-            moveDir.y -= 9.81f * Time.deltaTime;
-
         if (isWalking)
         {
             characterController.Move(moveDir * moveSpeed * Time.deltaTime);
-            transform.forward = Vector3.Slerp(transform.forward, new Vector3(moveDir.x, 0, moveDir.z), Time.deltaTime * 10f);
+
+            // Karakter hareket yönüne dönsün ama YAVAÞÇA
+            // Bu satýr kamerayý etkilemiyor artýk çünkü kamera playerTarget.forward deðil
+            // playerTarget.position'a göre hesaplýyor
+            Quaternion targetRotation = Quaternion.LookRotation(moveDir);
+            transform.rotation = Quaternion.Slerp(
+                transform.rotation, targetRotation, Time.deltaTime * 15f);
         }
         else
         {
-            // Yerde tutmak için küçük bir aþaðý kuvvet
             characterController.Move(Vector3.down * 2f * Time.deltaTime);
         }
     }

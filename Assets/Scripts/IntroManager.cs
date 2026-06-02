@@ -1,73 +1,44 @@
-using UnityEngine;
-using UnityEngine.Video;
+ï»¿using UnityEngine;
 using UnityEngine.SceneManagement;
-using System.Collections.Generic;
+using UnityEngine.Video; // ðŸš¨ Bunu eklemeyi unutma!
 
 public class IntroManager : MonoBehaviour
 {
-    [Header("Video Ayarlarý")]
     [SerializeField] private VideoPlayer videoPlayer;
-    [SerializeField] private List<VideoClip> introVideolari; // 4 videoyu buraya sýrayla koyacaðýz kanka
 
-    private int mevcutVideoIndex = 0;
-
-    void Start()
+    private void Start()
     {
+        // ðŸš¨ Ã–NEMLÄ° KONTROL: VideoPlayer sahne aÃ§Ä±lÄ±nca hazÄ±r mÄ±?
         if (videoPlayer == null)
-            videoPlayer = GetComponent<VideoPlayer>();
-
-        // Videolar bittiðinde tetiklenecek fonksiyonu Unity'ye tanýtýyoruz kanka
-        videoPlayer.loopPointReached += VideoBittiðindeTetikle;
-
-        // Ýlk videoyu oynatmaya hazýrla (Donmayý önlemek için Preload yapýyoruz kanka)
-        VideoyuHazýrlaVeOynat(mevcutVideoIndex);
-    }
-
-    void VideoyuHazýrlaVeOynat(int index)
-    {
-        if (introVideolari != null && index < introVideolari.Count && introVideolari[index] != null)
         {
-            videoPlayer.clip = introVideolari[index];
-            videoPlayer.Prepare(); // Videoyu RAM'e önceden yükle, donmayý keser kanka
+            videoPlayer = GetComponent<VideoPlayer>();
+        }
 
-            // Video tamamen belleðe yüklenince oynat kanka
-            videoPlayer.prepareCompleted += OynatmayýBaþlat;
+        // EÄŸer video yolu boÅŸsa veya video yoksa direkt oyuna geÃ§, Ã§Ã¶kmesin!
+        if (videoPlayer != null && videoPlayer.clip != null)
+        {
+            videoPlayer.loopPointReached += OnVideoFinished;
+            videoPlayer.Play();
         }
         else
         {
-            // Videolar bittiyse veya liste boþsa direkt Level 1 kanka!
-            IntroBittiOyunaGec();
+            Debug.Log("Video bulunamadÄ±, direkt oyuna geÃ§iliyor...");
+            Invoke("LoadGameScene", 1f); // Hata vermesin diye 1 saniye sonra geÃ§
         }
     }
 
-    void OynatmayýBaþlat(VideoPlayer vp)
+    private void OnVideoFinished(VideoPlayer vp)
     {
-        videoPlayer.prepareCompleted -= OynatmayýBaþlat;
-        videoPlayer.Play();
+        LoadGameScene();
     }
 
-    void VideoBittiðindeTetikle(VideoPlayer vp)
-    {
-        mevcutVideoIndex++;
-        VideoyuHazýrlaVeOynat(mevcutVideoIndex);
-    }
-
-    // Oyuncu sað üstteki butona basarsa introyu tamamen atlasýn kanka (Jüri sever bunu)
     public void IntroyuAtla()
     {
-        // Videoyu hemen durdur kanka
-        if (videoPlayer != null) videoPlayer.Stop();
-
-        // Level 1'e direkt geçiþ
-        SceneManager.LoadScene("Level1");
+        LoadGameScene();
     }
 
-    void IntroBittiOyunaGec()
+    private void LoadGameScene()
     {
-        // Temizlik yapýyoruz kanka hafýza dolmasýn
-        videoPlayer.loopPointReached -= VideoBittiðindeTetikle;
-
-        // Tam senin hiyerarþideki isme göre Level 1 sahnesini çaðýrýyoruz
         SceneManager.LoadScene("Level1");
     }
 }

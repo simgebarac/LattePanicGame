@@ -874,6 +874,10 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 4033404805099802793, guid: 509dac6945812b649a5b31eda3c8298a, type: 3}
+      propertyPath: m_Value
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 7666265202882239154, guid: 509dac6945812b649a5b31eda3c8298a, type: 3}
       propertyPath: m_Name
       value: Ayarlar_Panel

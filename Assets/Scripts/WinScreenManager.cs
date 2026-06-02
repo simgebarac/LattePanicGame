@@ -27,15 +27,29 @@ public class WinScreenManager : MonoBehaviour
 
     public void ContinueToNext()
     {
-        int completedLevel = PlayerPrefs.GetInt("CompletedLevel", 1);
-        int nextScene = completedLevel + 1;
+        // Hangi seviyeden geldiğimizi manuel olarak alıyoruz
+        // Level1'i bitirdiysen CurrentLevel 1 olmalı
+        int currentLevel = PlayerPrefs.GetInt("CurrentLevel", 1);
 
-        if (nextScene <= 3)
-            SceneManager.LoadScene("Level" + nextScene);
+        // Eğer Level 1'deysen ve 2'ye geçmen gerekiyorsa:
+        if (currentLevel == 1)
+        {
+            PlayerPrefs.SetInt("CurrentLevel", 2);
+            SceneManager.LoadScene("Level2");
+        }
+        // Eğer Level 2'deysen ve 3'e geçmen gerekiyorsa:
+        else if (currentLevel == 2)
+        {
+            PlayerPrefs.SetInt("CurrentLevel", 3);
+            SceneManager.LoadScene("Level3");
+        }
         else
+        {
             SceneManager.LoadScene("ThankYou");
-    }
+        }
 
+        PlayerPrefs.Save();
+    }
     public void GoToMainMenu()
     {
         SceneManager.LoadScene("MainMenu");
